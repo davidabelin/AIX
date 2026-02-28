@@ -50,3 +50,22 @@ def test_legacy_routes_redirect_to_rps(client, path: str, target: str):
     assert response.status_code == 302
     assert response.headers["Location"].endswith(target)
 
+
+@pytest.mark.parametrize(
+    ("path", "target"),
+    [
+        ("/api/v1/agents", "/rps/api/v1/agents"),
+        ("/api/v1/rl/status", "/rps/api/v1/rl/status"),
+        ("/api/v1/benchmarks/suites", "/rps/api/v1/benchmarks/suites"),
+    ],
+)
+def test_api_routes_redirect_to_rps_with_307(client, path: str, target: str):
+    response = client.get(path, follow_redirects=False)
+    assert response.status_code == 307
+    assert response.headers["Location"].endswith(target)
+
+
+def test_api_post_redirect_preserves_method(client):
+    response = client.post("/api/v1/games", json={"agent": "markov"}, follow_redirects=False)
+    assert response.status_code == 307
+    assert response.headers["Location"].endswith("/rps/api/v1/games")

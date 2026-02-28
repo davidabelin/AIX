@@ -22,6 +22,15 @@ in their own repositories and are mounted by interface.
 pip install -r requirements.txt
 ```
 
+If `polyhedra` fails with `ModuleNotFoundError: No module named 'numpy'`,
+install with build isolation disabled after preinstalling core build deps:
+
+```powershell
+python -m pip install -U pip setuptools wheel
+python -m pip install numpy
+python -m pip install polyhedra --no-build-isolation
+```
+
 3. Optional explicit bridge paths (only needed if sibling defaults are not used):
 
 ```powershell

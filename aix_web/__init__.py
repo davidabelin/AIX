@@ -8,6 +8,7 @@ from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from aix_web.blueprints.hub import hub_bp
 from aix_web.blueprints.routes_compat import routes_compat_bp
 from aix_web.lab_registry import build_lab_specs, resolve_lab_mounts
+from aix_web.lab_theme_wrapper import LabThemeWrapper
 
 
 def create_hub_app(config: dict | None = None) -> Flask:
@@ -52,5 +53,5 @@ def create_app(config: dict | None = None):
     for mount in hub_app.extensions.get("lab_mounts", []):
         if mount.app is None or mount.error is not None:
             continue
-        mount_map[f"/{mount.spec.slug}"] = mount.app
+        mount_map[f"/{mount.spec.slug}"] = LabThemeWrapper(mount.app, slug=mount.spec.slug)
     return DispatcherMiddleware(hub_app.wsgi_app, mount_map)

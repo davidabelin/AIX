@@ -16,6 +16,14 @@
   const jobStatus = document.getElementById("jobStatus");
   const jobDetail = document.getElementById("jobDetail");
   const jobsTableBody = document.getElementById("jobsTableBody");
+  const mountBase = (() => {
+    const raw = String(window.location.pathname || "").replace(/\/+$/, "");
+    if (raw === "" || raw === "/") {
+      return "/polyfolds";
+    }
+    return raw;
+  })();
+  const apiBase = `${mountBase}/api/v1`;
 
   let activeJobId = null;
   let pollTimer = null;
@@ -47,7 +55,7 @@
   }
 
   async function fetchJob(jobId) {
-    const response = await fetch(`/api/v1/jobs/${encodeURIComponent(jobId)}`);
+    const response = await fetch(`${apiBase}/jobs/${encodeURIComponent(jobId)}`);
     const body = await response.json();
     if (!response.ok) {
       throw new Error(body.error || "Failed to fetch job");
@@ -102,7 +110,7 @@
   }
 
   async function refreshJobs() {
-    const response = await fetch("/api/v1/jobs?limit=50");
+    const response = await fetch(`${apiBase}/jobs?limit=50`);
     const body = await response.json();
     if (!response.ok) {
       throw new Error(body.error || "Failed to fetch jobs");
@@ -115,7 +123,7 @@
     const payload = payloadFromForm();
     try {
       setStatus("Submitting job...");
-      const response = await fetch("/api/v1/jobs", {
+      const response = await fetch(`${apiBase}/jobs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -149,4 +157,3 @@
     .then(() => setStatus("No active job."))
     .catch((error) => setStatus(`Initialization failed: ${String(error)}`));
 })();
-
