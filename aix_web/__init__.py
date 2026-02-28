@@ -34,7 +34,7 @@ def create_hub_app(config: dict | None = None) -> Flask:
         nav_mounts = [
             mount
             for mount in app.extensions.get("lab_mounts", [])
-            if mount.spec.enabled and mount.app is not None and mount.error is None
+            if mount.spec.enabled and mount.app is not None
         ]
         nav_mounts = sorted(nav_mounts, key=lambda item: int(item.spec.nav_order))
         return {"hub_nav_mounts": nav_mounts}

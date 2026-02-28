@@ -5,6 +5,7 @@ This plan creates a new umbrella Flask app named `aix` that hosts multiple AI la
 Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/training`, `/rl`) to `/rps/*`.
 
 ## A) Fork This Conversation Now (practical method)
+**DONE**
 1. Create a repo checkpoint before branching conversation context:
    - Create a git branch for this point (example: `checkpoint/rps-ui-pass2`).
    - Optional tag for easy return.
@@ -15,8 +16,8 @@ Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/
 3. Keep this conversation unchanged as your RPS-focused thread.
 4. If your UI has a built-in duplicate/fork action, use that first; if not, use the branch + new chat workflow above (it is the reliable equivalent).
 
-## C) Original Plan Status (where we are now)
-
+## B) Original Plan Status (where we are now)
+**For RPS project, not AIX, included for context**
 ### Milestone completion snapshot
 1. Milestone 0 (scaffold/app factory/base pages): **Complete**.
 2. Milestone 1 (notebook archaeology + heuristic migration): **Complete enough for production use**.
@@ -37,7 +38,7 @@ Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/
 2. Freeze RPS v1 API and route behavior with a release checklist.
 3. Decide whether “separate worker service” is mandatory for v1 completion or deferred to v1.1.
 
-## D) Expansion Plan for `geometry/` and new top-level app
+## C) Expansion Plan for `geometry/` and new top-level app
 
 ## Decisions locked
 1. App shape: **One Flask app**.

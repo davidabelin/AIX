@@ -11,6 +11,7 @@
         --panel: #fffdf9;
         --accent: #0f7b6d;
         --line: #dfd8ce;
+        --muted: #615f67;
       }
       * { box-sizing: border-box; }
       body {
@@ -21,29 +22,67 @@
         background: linear-gradient(160deg, var(--paper), #f6efe6);
       }
       main {
-        width: min(920px, 92vw);
-        margin: 1.8rem auto;
+        width: min(1040px, 94vw);
+        margin: 1.6rem auto;
+        display: grid;
+        gap: 0.9rem;
       }
       .panel {
         background: var(--panel);
         border: 1px solid var(--line);
         border-radius: 16px;
-        padding: 1rem 1.1rem;
+        padding: 0.95rem 1.05rem;
       }
-      h1, h2 { margin: 0 0 0.7rem; }
-      .lede { color: #615f67; }
-      code { background: #f1e9df; padding: 0.08rem 0.35rem; border-radius: 6px; }
-      .back {
-        display: inline-block;
-        margin-top: 0.8rem;
-        text-decoration: none;
-        color: #fff;
-        background: var(--accent);
+      h1, h2 { margin: 0 0 0.65rem; }
+      p { margin: 0.5rem 0; }
+      .lede { color: var(--muted); }
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 0.65rem;
+      }
+      label { display: grid; gap: 0.3rem; font-size: 0.93rem; color: #3e3d45; }
+      input, select {
+        font: inherit;
+        padding: 0.5rem 0.55rem;
+        border: 1px solid var(--line);
         border-radius: 10px;
-        padding: 0.45rem 0.8rem;
+        background: #fff;
       }
-      ul { margin: 0; padding-left: 1.1rem; }
-      li { margin: 0.45rem 0; }
+      .actions { margin-top: 0.7rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
+      button, .back {
+        border: 0;
+        border-radius: 10px;
+        padding: 0.46rem 0.82rem;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .primary { color: #fff; background: var(--accent); }
+      .secondary { color: #24242a; background: #f0e9df; }
+      .back { text-decoration: none; display: inline-block; }
+      .status { color: var(--muted); margin-top: 0.55rem; }
+      .mono {
+        font-family: ui-monospace, Menlo, Consolas, monospace;
+        white-space: pre-wrap;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fcfaf6;
+        padding: 0.7rem;
+        max-height: 240px;
+        overflow: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.91rem;
+      }
+      th, td {
+        border-bottom: 1px solid #e6ddcf;
+        padding: 0.42rem 0.46rem;
+        text-align: left;
+      }
+      th { color: #3b3a42; font-weight: 600; }
     </style>
   </head>
   <body>
@@ -51,20 +90,80 @@
       <section class="panel">
         <h1>Polyfolds</h1>
         <p class="lede">
-          Phase-0 web shell for the Polyfolds lab. The computation code remains in the
-          external geometry repo and will be surfaced incrementally through API/job routes.
+          Phase-1 bridge: submit Polyfolds CLI jobs from web UI and monitor status. Large datasets stay external to AIX by default.
         </p>
-        <h2>Immediate Integration Targets</h2>
-        <ul>
-          <li>Expose read-only dataset metadata and generator presets.</li>
-          <li>Add queued generation jobs for nets and datasets.</li>
-          <li>Publish artifact links without checking large datasets into AIX.</li>
-        </ul>
-        <p>Current bridge strategy keeps generated data external and globally ignored by default.</p>
-        <p>CLI anchor examples: <code>solid_tetra.py dataset</code>, <code>solid_hexa.py nets</code>.</p>
-        <a class="back" href="/">Back to AIX Hub</a>
+        <form id="polyfoldsJobForm">
+          <div class="controls">
+            <label>Kind
+              <select name="kind" id="kindInput">
+                <option value="dataset">dataset</option>
+                <option value="nets">nets</option>
+              </select>
+            </label>
+            <label>Solid
+              <select name="solid" id="solidInput">
+                <option value="tetra">tetra</option>
+                <option value="hexa">hexa</option>
+                <option value="octa">octa</option>
+                <option value="dodeca">dodeca</option>
+                <option value="icosa">icosa</option>
+              </select>
+            </label>
+            <label>Nets Count
+              <input type="number" id="countInput" value="6" min="1" step="1">
+            </label>
+            <label>Dataset N Valid
+              <input type="number" id="nValidInput" value="200" min="1" step="1">
+            </label>
+            <label>Dataset N Incomplete
+              <input type="number" id="nIncompleteInput" value="200" min="1" step="1">
+            </label>
+            <label>Dataset N Invalid
+              <input type="number" id="nInvalidInput" value="200" min="1" step="1">
+            </label>
+            <label>Seed
+              <input type="number" id="seedInput" value="2025" min="0" step="1">
+            </label>
+            <label>Timeout Seconds
+              <input type="number" id="timeoutInput" value="900" min="30" step="30">
+            </label>
+          </div>
+          <div class="actions">
+            <label><input id="quickInput" type="checkbox" checked> Quick mode (`--test`) for dataset</label>
+            <label><input id="plotInput" type="checkbox"> Plot preview (dataset only)</label>
+          </div>
+          <div class="actions">
+            <button class="primary" type="submit">Submit Job</button>
+            <button class="secondary" id="refreshJobsBtn" type="button">Refresh Jobs</button>
+            <a class="back secondary" href="/">Back to AIX Hub</a>
+          </div>
+          <p id="jobStatus" class="status">No active job.</p>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Active Job Detail</h2>
+        <pre id="jobDetail" class="mono">No job selected.</pre>
+      </section>
+
+      <section class="panel">
+        <h2>Recent Jobs</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Status</th>
+              <th>Kind</th>
+              <th>Solid</th>
+              <th>Exit</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody id="jobsTableBody"></tbody>
+        </table>
       </section>
     </main>
+    <script src="{{ url_for('static', filename='js/polyfolds.js') }}"></script>
   </body>
 </html>
 

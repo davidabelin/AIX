@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable
 
+from aix_web.lazy_mount import LazyMountApp
+
 
 LabLoader = Callable[[], Any]
 
@@ -66,18 +68,13 @@ def build_lab_specs() -> list[LabSpec]:
 
 
 def resolve_lab_mounts(specs: list[LabSpec]) -> list[LabMount]:
-    """Resolve all enabled labs to WSGI mounts, capturing import errors."""
+    """Build lazy WSGI mounts for all enabled labs."""
 
     mounts: list[LabMount] = []
     for spec in specs:
         if not spec.enabled:
             mounts.append(LabMount(spec=spec, app=None, error="disabled"))
             continue
-        try:
-            app = spec.loader()
-        except Exception as exc:  # pragma: no cover
-            mounts.append(LabMount(spec=spec, app=None, error=str(exc)))
-            continue
+        app = LazyMountApp(name=spec.slug, loader=spec.loader)
         mounts.append(LabMount(spec=spec, app=app, error=None))
     return mounts
-
