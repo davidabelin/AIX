@@ -1,0 +1,19 @@
+# Python runtime
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Local app artifacts
+data/
+events/
+models/
+exports/
+*.db
+
+# Large generated lab datasets (opt-in only)
+**/dataset*/
+**/nets_*/
+**/labels.jsonl
+

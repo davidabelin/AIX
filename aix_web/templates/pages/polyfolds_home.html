@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }} | AIX</title>
+    <style>
+      :root {
+        --ink: #1f1f24;
+        --paper: #fff8ef;
+        --panel: #fffdf9;
+        --accent: #0f7b6d;
+        --line: #dfd8ce;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: linear-gradient(160deg, var(--paper), #f6efe6);
+      }
+      main {
+        width: min(920px, 92vw);
+        margin: 1.8rem auto;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 1rem 1.1rem;
+      }
+      h1, h2 { margin: 0 0 0.7rem; }
+      .lede { color: #615f67; }
+      code { background: #f1e9df; padding: 0.08rem 0.35rem; border-radius: 6px; }
+      .back {
+        display: inline-block;
+        margin-top: 0.8rem;
+        text-decoration: none;
+        color: #fff;
+        background: var(--accent);
+        border-radius: 10px;
+        padding: 0.45rem 0.8rem;
+      }
+      ul { margin: 0; padding-left: 1.1rem; }
+      li { margin: 0.45rem 0; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="panel">
+        <h1>Polyfolds</h1>
+        <p class="lede">
+          Phase-0 web shell for the Polyfolds lab. The computation code remains in the
+          external geometry repo and will be surfaced incrementally through API/job routes.
+        </p>
+        <h2>Immediate Integration Targets</h2>
+        <ul>
+          <li>Expose read-only dataset metadata and generator presets.</li>
+          <li>Add queued generation jobs for nets and datasets.</li>
+          <li>Publish artifact links without checking large datasets into AIX.</li>
+        </ul>
+        <p>Current bridge strategy keeps generated data external and globally ignored by default.</p>
+        <p>CLI anchor examples: <code>solid_tetra.py dataset</code>, <code>solid_hexa.py nets</code>.</p>
+        <a class="back" href="/">Back to AIX Hub</a>
+      </section>
+    </main>
+  </body>
+</html>
+

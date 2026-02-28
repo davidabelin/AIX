@@ -1,0 +1,29 @@
+{% extends "base_hub.html" %}
+{% block title %}AIX | Hub{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">Umbrella App + Bridge Adapters + Future Labs</p>
+  <h1>{{ title }}</h1>
+  <p class="lede">
+    This hub mounts independent lab apps by interface, not file copy.
+    Stable labs stay in their own repos while AIX provides a shared entry shell.
+  </p>
+</section>
+
+<section class="grid">
+  {% for mount in lab_mounts %}
+  <article class="card">
+    <h2>{{ mount.spec.display_name }}</h2>
+    <p>{{ mount.spec.summary }}</p>
+    {% if mount.app and not mount.error %}
+    <p class="status status-ok">Status: mounted</p>
+    <a class="btn btn-primary" href="/{{ mount.spec.slug }}/">Open {{ mount.spec.slug }}</a>
+    {% else %}
+    <p class="status status-error">Status: unavailable{% if mount.error %} ({{ mount.error }}){% endif %}</p>
+    <button class="btn btn-secondary" type="button" disabled>Not Available</button>
+    {% endif %}
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}
+

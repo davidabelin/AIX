@@ -1,0 +1,3 @@
+-r ../rps/requirements.txt
+-r ../geometry/requirements.txt
+
