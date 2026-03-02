@@ -22,6 +22,7 @@ def test_hub_home_renders(client):
     html = response.get_data(as_text=True)
     assert "Assorted Artificial Intelligence Labs" in html
     assert "/rps/" in html
+    assert "/c4/" in html
     assert "/euclidorithm/" in html
     assert "/polyfolds/" in html
 
@@ -31,9 +32,9 @@ def test_healthz_reports_configured_and_pending_labs(client):
     assert response.status_code == 200
     payload = response.get_json()
     assert payload["status"] == "ok"
-    assert set(payload["configured_labs"]) == {"rps", "euclidorithm", "polyfolds"}
+    assert set(payload["configured_labs"]) == {"rps", "c4", "euclidorithm", "polyfolds"}
     assert set(payload["mounted_labs"]) == set()
-    assert set(payload["pending_labs"]) == {"rps", "euclidorithm", "polyfolds"}
+    assert set(payload["pending_labs"]) == {"rps", "c4", "euclidorithm", "polyfolds"}
     assert payload["failed_labs"] == {}
 
 

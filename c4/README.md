@@ -6,9 +6,13 @@ Connect4 lab scaffold for AIX, intentionally shaped to mirror the `rps` project 
 - Port reusable legacy heuristic agents from the old `connect4` repo into clean Python modules.
 - Add a robust dataset importer for historical CSV/JSONL files from notebook workflows.
 - Add a first tabular RL trainer based on the historical `connectx-with-q-learning` notebook.
+- Add `rps`-style backend architecture:
+  - repository-backed gameplay API
+  - supervised training jobs + model registry
+  - RL training jobs + model artifact registration
 
 ### What is intentionally deferred
-- Full Flask web app parity with `rps_web` pages (`play`, `training`, `rl`) and matching UX chrome.
+- Full gameplay UI/animation implementation parity with `rps_web`.
 - Full storage/job-manager parity (`c4_storage.repository`, async training jobs, model registry DB).
 - AIX mount adapter (`/c4`) and nav integration.
 

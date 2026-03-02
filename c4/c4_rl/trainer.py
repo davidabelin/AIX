@@ -37,7 +37,9 @@ class QTrainConfig:
     seed: int = 7
 
 
-def _state_key(board: list[int], mark: int) -> str:
+def state_key(board: list[int], mark: int) -> str:
+    """Encode board+mark state into compact base-3 hash key."""
+
     tokens = board[:] + [int(mark)]
     as_base3 = "".join(str(int(value)) for value in tokens)
     return hex(int(as_base3, 3))[2:]
@@ -51,7 +53,7 @@ class QTable:
         self.table: dict[str, list[float]] = {}
 
     def row(self, board: list[int], mark: int) -> list[float]:
-        key = _state_key(board, mark)
+        key = state_key(board, mark)
         if key not in self.table:
             self.table[key] = list(np.zeros(self.action_space_n))
         return self.table[key]
@@ -160,7 +162,7 @@ def train_q_table(config: QTrainConfig) -> dict:
     policy = {key: int(np.argmax(values)) for key, values in q_table.table.items()}
     return {
         "schema_version": 1,
-        "model_type": "rl_q_table",
+        "model_type": "rl_qtable",
         "config": asdict(config),
         "q_table": q_table.table,
         "policy": policy,
