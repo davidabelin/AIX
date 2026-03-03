@@ -2,6 +2,8 @@ runtime: python314
 entrypoint: gunicorn -b :$PORT run:app
 
 env_variables:
+  C4_DATABASE_URL: ""
+  C4_DATABASE_URL_SECRET: projects/aix-labs/secrets/c4-database-url/versions/latest
   C4_TASKS_PROJECT_ID: aix-labs
   C4_TASKS_LOCATION: us-west1
   C4_TASKS_QUEUE: c4-training
@@ -10,6 +12,8 @@ env_variables:
   C4_EVENTS_DIR: gs://aix-labs-data/c4/events
   C4_MODELS_DIR: gs://aix-labs-data/c4/models
   C4_EXPORTS_DIR: gs://aix-labs-data/c4/exports
+  RPS_DATABASE_URL: ""
+  RPS_DATABASE_URL_SECRET: projects/aix-labs/secrets/rps-database-url/versions/latest
   RPS_TASKS_PROJECT_ID: aix-labs
   RPS_TASKS_LOCATION: us-west1
   RPS_TASKS_QUEUE: rps-training
