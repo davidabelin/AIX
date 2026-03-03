@@ -2,6 +2,8 @@ runtime: python314
 entrypoint: gunicorn -b :$PORT run:app
 
 env_variables:
+  AIX_ENABLED_LABS: polyfolds
+  AIX_POLYFOLDS_JOBS_ROOT: /tmp/polyfolds_jobs
   C4_DATABASE_URL: ""
   C4_DATABASE_URL_SECRET: projects/aix-labs/secrets/c4-database-url/versions/latest
   C4_TASKS_PROJECT_ID: aix-labs

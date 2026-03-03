@@ -23,7 +23,12 @@ def load_polyfolds_app() -> Flask:
     repo_override = str(os.getenv("AIX_POLYFOLDS_REPO", "")).strip()
     repo_dir = Path(repo_override).expanduser() if repo_override else (AIX_ROOT / r"..\geometry\polyfolds")
     jobs_root_override = str(os.getenv("AIX_POLYFOLDS_JOBS_ROOT", "")).strip()
-    jobs_root = Path(jobs_root_override).expanduser() if jobs_root_override else (AIX_ROOT / "data" / "polyfolds_jobs")
+    if jobs_root_override:
+        jobs_root = Path(jobs_root_override).expanduser()
+    else:
+        # App Engine standard filesystem is read-only except /tmp.
+        in_gae = bool(str(os.getenv("GAE_ENV", "")).strip()) or bool(str(os.getenv("K_SERVICE", "")).strip())
+        jobs_root = Path("/tmp/polyfolds_jobs") if in_gae else (AIX_ROOT / "data" / "polyfolds_jobs")
     manager = PolyfoldsJobManager(
         repo_dir=repo_dir,
         jobs_root=jobs_root,
