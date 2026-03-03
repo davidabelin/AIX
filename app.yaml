@@ -2,27 +2,7 @@ runtime: python314
 entrypoint: gunicorn -b :$PORT run:app
 
 env_variables:
-  AIX_ENABLED_LABS: polyfolds
-  AIX_POLYFOLDS_JOBS_ROOT: /tmp/polyfolds_jobs
-  C4_DATABASE_URL: ""
-  C4_DATABASE_URL_SECRET: projects/aix-labs/secrets/c4-database-url/versions/latest
-  C4_TASKS_PROJECT_ID: aix-labs
-  C4_TASKS_LOCATION: us-west1
-  C4_TASKS_QUEUE: c4-training
-  C4_TRAINING_WORKER_TOKEN_SECRET: projects/aix-labs/secrets/c4-worker-token/versions/latest
-  C4_INTERNAL_WORKER_TOKEN_SECRET: projects/aix-labs/secrets/c4-worker-token/versions/latest
-  C4_EVENTS_DIR: gs://aix-labs-data/c4/events
-  C4_MODELS_DIR: gs://aix-labs-data/c4/models
-  C4_EXPORTS_DIR: gs://aix-labs-data/c4/exports
-  RPS_DATABASE_URL: ""
-  RPS_DATABASE_URL_SECRET: projects/aix-labs/secrets/rps-database-url/versions/latest
-  RPS_TASKS_PROJECT_ID: aix-labs
-  RPS_TASKS_LOCATION: us-west1
-  RPS_TASKS_QUEUE: rps-training
-  RPS_TRAINING_WORKER_TOKEN_SECRET: projects/aix-labs/secrets/rps-worker-token/versions/latest
-  RPS_INTERNAL_WORKER_TOKEN_SECRET: projects/aix-labs/secrets/rps-worker-token/versions/latest
-  RPS_EVENTS_DIR: gs://aix-labs-data/rps/events
-  RPS_MODELS_DIR: gs://aix-labs-data/rps/models
-  RPS_EXPORTS_DIR: gs://aix-labs-data/rps/exports
+  # Hub-only service. Lab subpaths are dispatched to dedicated services.
+  AIX_ENABLED_LABS: rps,c4,euclidorithm
 
 service_account: aix-admin@aix-labs.iam.gserviceaccount.com

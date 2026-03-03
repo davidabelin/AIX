@@ -1,0 +1,9 @@
+dispatch:
+  - url: "*/rps/*"
+    service: rps
+  - url: "*/c4/*"
+    service: c4
+  - url: "*/euclidorithm/*"
+    service: euclidorithm
+  - url: "*/"
+    service: default
