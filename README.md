@@ -8,6 +8,7 @@ in their own repositories and are mounted by interface.
 ## Bridge strategy
 
 - `rps` remains independent and is mounted under `/rps`.
+- `c4` remains independent and is mounted under `/c4`.
 - `euclidorithm` remains independent and is mounted under `/euclidorithm`.
 - `polyfolds` is mounted under `/polyfolds` with phase-1 job API bridge.
 - Large generated datasets are not tracked in this repo by default.
@@ -35,6 +36,7 @@ python -m pip install polyhedra --no-build-isolation
 
 ```powershell
 $env:AIX_RPS_REPO = "C:\\path\\to\\rps"
+$env:AIX_C4_REPO = "C:\\path\\to\\c4"
 $env:AIX_EUCLIDORITHM_REPO = "C:\\path\\to\\geometry\\euclidorithm"
 $env:AIX_POLYFOLDS_REPO = "C:\\path\\to\\geometry\\polyfolds"
 $env:AIX_POLYFOLDS_JOBS_ROOT = "C:\\path\\to\\aix\\data\\polyfolds_jobs"
