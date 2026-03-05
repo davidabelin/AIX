@@ -1,9 +1,13 @@
 dispatch:
+  - url: "*/api/v1/*"
+    service: rps
   - url: "*/rps/*"
     service: rps
   - url: "*/c4/*"
     service: c4
   - url: "*/euclidorithm/*"
     service: euclidorithm
-  - url: "*/"
+  - url: "*/polyfolds/*"
+    service: default
+  - url: "*/*"
     service: default

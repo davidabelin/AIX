@@ -43,9 +43,8 @@ def _rps_config_from_env() -> dict:
 def load_rps_app():
     """Load and return the bridged RPS Flask application."""
 
-    add_import_path("AIX_RPS_REPO", r"..\rps")
+    add_import_path("AIX_RPS_REPO", "../rps")
     module = import_module("rps_web")
     create_app = getattr(module, "create_app")
     config = _rps_config_from_env()
     return create_app(config if config else None)
-

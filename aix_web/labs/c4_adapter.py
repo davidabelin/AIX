@@ -41,9 +41,7 @@ def _c4_config_from_env() -> dict:
 def load_c4_app():
     """Load and return the bridged c4 Flask application."""
 
-    repo_path = add_import_path("AIX_C4_REPO", r"..\c4")
-    if repo_path is None:
-        add_import_path("AIX_C4_REPO", r"c4")
+    add_import_path("AIX_C4_REPO", "../c4")
     module = import_module("c4_web")
     create_app = getattr(module, "create_app")
     config = _c4_config_from_env()

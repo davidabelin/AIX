@@ -26,5 +26,3 @@ setuptools>=80.9.0
 six>=1.17.0
 sympy>=1.14.0
 wheel>=0.45.1
-
-#polyhedra>=0.4.0

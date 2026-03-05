@@ -9,6 +9,7 @@ from aix_web.blueprints.hub import hub_bp
 from aix_web.blueprints.routes_compat import routes_compat_bp
 from aix_web.lab_registry import build_lab_specs, resolve_lab_mounts
 from aix_web.lab_theme_wrapper import LabThemeWrapper
+from aix_web.path_prefix_wrapper import PathPrefixWrapper
 
 
 def create_hub_app(config: dict | None = None) -> Flask:
@@ -50,8 +51,18 @@ def create_app(config: dict | None = None):
 
     hub_app = create_hub_app(config=config)
     mount_map = {}
+    themed_by_slug = {}
     for mount in hub_app.extensions.get("lab_mounts", []):
         if mount.app is None or mount.error is not None:
             continue
-        mount_map[f"/{mount.spec.slug}"] = LabThemeWrapper(mount.app, slug=mount.spec.slug)
+        themed_app = LabThemeWrapper(mount.app, slug=mount.spec.slug)
+        mount_map[f"/{mount.spec.slug}"] = themed_app
+        themed_by_slug[mount.spec.slug] = themed_app
+
+    # API compatibility alias for legacy RPS absolute calls (/api/v1/*).
+    # This avoids browser-visible redirect HTML for JSON fetches.
+    rps_app = themed_by_slug.get("rps")
+    if rps_app is not None:
+        mount_map["/api/v1"] = PathPrefixWrapper(rps_app, prefix="/api/v1")
+
     return DispatcherMiddleware(hub_app.wsgi_app, mount_map)

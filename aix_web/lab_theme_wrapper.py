@@ -18,6 +18,18 @@ LAB_PALETTES = {
         "bg": "#f4f8f7",
         "bg_alt": "#eef5f3",
     },
+    "c4": {
+        "accent": "#8a1f2f",
+        "accent_2": "#f08d2e",
+        "paper": "#fff7f4",
+        "panel": "#fffdfa",
+        "line": "#e2d4cf",
+        "muted": "#695962",
+        "brand": "#8a1f2f",
+        "brand_soft": "#f8dfe4",
+        "bg": "#faf3f1",
+        "bg_alt": "#f3e9e6",
+    },
     "euclidorithm": {
         "accent": "#0a4f8b",
         "accent_2": "#b66d2f",
@@ -53,6 +65,7 @@ def _build_injection(slug: str) -> str:
     return f"""
 <style id="aix-arm-theme">
   :root {{
+    --ink: #1f1f24;
     --accent: {palette["accent"]};
     --accent-2: {palette["accent_2"]};
     --paper: {palette["paper"]};
@@ -68,10 +81,54 @@ def _build_injection(slug: str) -> str:
   }}
   body {{
     font-family: "Space Grotesk", "Segoe UI", sans-serif;
+    color: var(--ink, #1f1f24);
+    background:
+      radial-gradient(circle at 20% 10%, var(--brand-soft) 0%, transparent 40%),
+      radial-gradient(circle at 80% 20%, var(--bg) 0%, transparent 35%),
+      linear-gradient(160deg, var(--paper), var(--bg-alt));
   }}
   h1, h2, h3 {{
     font-family: "Baskervville", Georgia, serif;
     font-weight: 400;
+  }}
+  header {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem clamp(0.9rem, 3vw, 1.6rem);
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+  }}
+  nav {{
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }}
+  main {{
+    width: min(1020px, 94vw);
+    margin: 1.15rem auto 2rem;
+    display: grid;
+    gap: 0.9rem;
+  }}
+  section, .panel, .card {{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 0.95rem 1.05rem;
+    box-shadow: 0 8px 24px rgba(16, 12, 9, 0.08);
+  }}
+  a {{
+    color: var(--brand);
+  }}
+  button, input, select, .btn {{
+    font: inherit;
+  }}
+  code {{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 0.08rem 0.35rem;
   }}
   #aix-subpage-back {{
     position: fixed;

@@ -23,6 +23,12 @@ in their own repositories and are mounted by interface.
 pip install -r requirements.txt
 ```
 
+For tests/dev tooling:
+
+```powershell
+pip install -r requirements-dev.txt
+```
+
 If `polyhedra` fails with `ModuleNotFoundError: No module named 'numpy'`,
 install with build isolation disabled after preinstalling core build deps:
 
@@ -49,6 +55,18 @@ python run.py
 ```
 
 Then open `http://127.0.0.1:5000/`.
+
+Useful diagnostics endpoints:
+
+- `/healthz` for mount status + runtime warnings.
+- `/diagnostics/bridges` for non-secret bridge/config hints.
+
+Legacy RPS absolute API calls are bridged at `/api/v1/*` for compatibility.
+
+Cloud persistence note:
+
+- On App Engine, configure `RPS_DATABASE_URL` (or `RPS_DATABASE_URL_SECRET`) and
+  `C4_DATABASE_URL` (or `C4_DATABASE_URL_SECRET`) to avoid ephemeral SQLite data loss on instance recycle.
 
 ## Polyfolds Phase-1 API
 

@@ -1,7 +1,7 @@
-# AIX Multi-Lab Expansion Plan (RPS + Euclidorithm + Polyfolding)
+# AIX Multi-Lab Expansion Plan (RPS + Euclidorithm + Polyfolds)
 
 ## Summary
-This plan creates a new umbrella Flask app named `aix` that hosts multiple AI labs under path prefixes (`/rps/*`, `/euclidorithm/*`, `/polyfolding/*`) while preserving and reusing your current RPS implementation with minimal disruption.  
+This plan creates a new umbrella Flask app named `aix` that hosts multiple AI labs under path prefixes (`/rps/*`, `/euclidorithm/*`, `/polyfolds/*`) while preserving and reusing your current RPS implementation with minimal disruption.  
 Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/training`, `/rl`) to `/rps/*`.
 
 ## A) Fork This Conversation Now (practical method)
@@ -42,7 +42,7 @@ Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/
 
 ## Decisions locked
 1. App shape: **One Flask app**.
-2. Path scheme: **Lab prefixes** (`/rps/*`, `/euclidorithm/*`, `/polyfolding/*`).
+2. Path scheme: **Lab prefixes** (`/rps/*`, `/euclidorithm/*`, `/polyfolds/*`).
 3. Geometry intake: **Wrap then refactor**.
 4. Route compatibility: **Redirect old routes**.
 5. Top-level app/package name: **`aix`**.
@@ -51,7 +51,7 @@ Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/
 1. Add a new umbrella package: `aix_web`.
 2. Keep existing RPS packages (`rps_web`, `rps_core`, `rps_agents`, `rps_training`, `rps_rl`, `rps_storage`) intact initially.
 3. Add lab adapters in `aix_web` that mount each lab under URL prefixes.
-4. Gradually normalize `geometry/euclidorithm` and `geometry/polyfolding` to the same shell conventions used by RPS.
+4. Gradually normalize `geometry/euclidorithm` and `geometry/polyfolds` to the same shell conventions used by RPS.
 
 ## Ideal local file structure (target state)
 1. `aix_web/__init__.py` (new app factory).
@@ -62,16 +62,16 @@ Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/
 6. `aix_web/static/css/hub_theme.css` (shared theme tokens + lab overrides).
 7. `aix_web/labs/rps_adapter.py` (mount existing RPS blueprints at `/rps`).
 8. `aix_web/labs/euclidorithm_adapter.py` (mount geometry/euclidorithm first as wrapped module).
-9. `aix_web/labs/polyfolding_adapter.py` (initial placeholder + data/training module bridge).
+9. `aix_web/labs/polyfolds_adapter.py` (initial placeholder + data/training module bridge).
 10. `geometry/euclidorithm/*` (existing code retained initially, wrapped).
-11. `geometry/polyfolding/*` (existing/ongoing data-generation assets retained initially).
+11. `geometry/polyfolds/*` (existing/ongoing data-generation assets retained initially).
 
 ## Important changes/additions to public APIs/interfaces/types
 1. New URL contract:
    - `/` => AIX hub page.
    - `/rps/*` => existing RPS pages/APIs.
    - `/euclidorithm/*` => Euclidorithm lab pages/APIs.
-   - `/polyfolding/*` => Polyfolding lab pages/APIs.
+   - `/polyfolds/*` => Polyfolds lab pages/APIs.
 2. Backward-compat redirects:
    - `/play` -> `/rps/play`
    - `/training` -> `/rps/training`
@@ -96,24 +96,24 @@ Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/
 3. Secret Manager naming convention:
    - `aix-rps-database-url`, `aix-euclid-database-url`, `aix-poly-database-url`, etc.
 4. Cloud Tasks queue split by lab:
-   - `rps-training`, `polyfolding-training` (euclidorithm queue only if needed).
+   - `rps-training`, `polyfolds-training` (euclidorithm queue only if needed).
 5. Cloud Storage split by lab prefix:
    - `gs://<bucket>/rps/...`
    - `gs://<bucket>/euclidorithm/...`
-   - `gs://<bucket>/polyfolding/...`
+   - `gs://<bucket>/polyfolds/...`
 6. Keep RPS cloud deployment stable during AIX build; do not couple cutover dates.
 
 ## Implementation phases (high-level, not code-level detail)
 1. Phase 0: Scaffold `aix_web` shell and hub homepage.
 2. Phase 1: Mount RPS under `/rps/*` via adapter and add legacy redirects.
 3. Phase 2: Add `geometry/euclidorithm` wrapper routes and shared shell integration.
-4. Phase 3: Add `geometry/polyfolding` wrapper with placeholder web lab + data hooks.
+4. Phase 3: Add `geometry/polyfolds` wrapper with placeholder web lab + data hooks.
 5. Phase 4: Shared theming + navigation consistency pass across all labs.
 6. Phase 5: AIX deployment config for new GCP project (staging first).
 
 ## Test cases and scenarios
 1. Routing:
-   - `/rps/play`, `/euclidorithm`, `/polyfolding` all resolve.
+   - `/rps/play`, `/euclidorithm`, `/polyfolds` all resolve.
    - `/play`, `/training`, `/rl` redirect correctly to `/rps/*`.
 2. UI shell:
    - Shared nav works on desktop/mobile with no horizontal overflow.

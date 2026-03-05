@@ -8,6 +8,7 @@ aix_web\bridge.py
 aix_web\lab_registry.py
 aix_web\lab_theme_wrapper.py
 aix_web\lazy_mount.py
+aix_web\path_prefix_wrapper.py
 aix_web\__init__.py
 aix_web\blueprints\hub.py
 aix_web\blueprints\routes_compat.py
