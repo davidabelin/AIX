@@ -3,6 +3,6 @@ entrypoint: gunicorn -b :$PORT run:app
 
 env_variables:
   # Hub-only service. Lab subpaths are dispatched to dedicated services.
-  AIX_ENABLED_LABS: rps,c4,euclidorithm
+  AIX_ENABLED_LABS: rps,c4,euclidorithm,polyfolds
 
 service_account: aix-admin@aix-labs.iam.gserviceaccount.com
