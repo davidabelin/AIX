@@ -47,11 +47,12 @@ def build_lab_specs() -> list[LabSpec]:
     """Return default lab specs for the current AIX build."""
 
     from aix_web.labs.c4_adapter import load_c4_app
+    from aix_web.labs.drl_adapter import load_drl_app
     from aix_web.labs.euclidorithm_adapter import load_euclidorithm_app
     from aix_web.labs.polyfolds_adapter import load_polyfolds_app
     from aix_web.labs.rps_adapter import load_rps_app
 
-    default_order = ["rps", "c4", "euclidorithm", "polyfolds"]
+    default_order = ["rps", "drl", "c4", "euclidorithm", "polyfolds"]
     enabled_slugs = _enabled_labs_from_env(default_order)
 
     return sorted(
@@ -63,6 +64,14 @@ def build_lab_specs() -> list[LabSpec]:
                 summary="Stable gameplay, supervised training, RL, and benchmarks.",
                 loader=load_rps_app,
                 enabled=("rps" in enabled_slugs),
+            ),
+            LabSpec(
+                slug="drl",
+                display_name="Deep RL Lab",
+                nav_order=12,
+                summary="Curriculum map, project archive, papers, and recovery paths for the DRL repository.",
+                loader=load_drl_app,
+                enabled=("drl" in enabled_slugs),
             ),
             LabSpec(
                 slug="c4",
