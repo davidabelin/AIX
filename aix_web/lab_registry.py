@@ -69,7 +69,7 @@ def build_lab_specs() -> list[LabSpec]:
                 slug="drl",
                 display_name="Deep RL Lab",
                 nav_order=12,
-                summary="Curriculum map, project archive, papers, and recovery paths for the DRL repository.",
+                summary="AIX portal for the separate DRL sister app: TOC, orientation, and launch links.",
                 loader=load_drl_app,
                 enabled=("drl" in enabled_slugs),
             ),

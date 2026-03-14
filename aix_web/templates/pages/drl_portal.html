@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Deep RL Lab | AIX Portal</title>
+  </head>
+  <body>
+    <main>
+      <section>
+        <p>Separate Runtime + AIX Directory</p>
+        <h1>Deep RL Lab</h1>
+        <p>
+          DRL stays a separate web application. AIX gives it a stable entry page, a readable table of contents,
+          and one place to explain where the live app belongs in the broader lab ecosystem.
+        </p>
+        {% if external_url %}
+        <p><strong>Live sister app:</strong> <a href="{{ external_url }}">{{ external_url }}</a></p>
+        {% else %}
+        <p><strong>Live sister app:</strong> not configured yet. Set <code>AIX_DRL_APP_URL</code> when the external DRL deployment is ready.</p>
+        {% endif %}
+        <p><strong>Local repo:</strong> <code>{{ repo_root }}</code> {% if repo_present %}(detected){% else %}(not present in this runtime){% endif %}</p>
+        <div>
+          {% for item in quick_links %}
+            {% if item.enabled and item.url %}
+            <a href="{{ item.url }}">{{ item.label }}</a>
+            {% else %}
+            <span>{{ item.label }} (configure URL)</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </section>
+
+      <section>
+        <h2>Why DRL Stays Separate</h2>
+        <ul>
+          <li>DRL already has its own app shape, runtime assumptions, and deployment scripts.</li>
+          <li>AIX is App Engine multi-service right now; DRL is already shaped for a separate deployment path.</li>
+          <li>Linking cleanly is cheaper and more reliable than trying to double-run DRL inside AIX.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Table Of Contents</h2>
+        <p>This is the AIX-facing guide to the DRL app’s major pages and branches.</p>
+        {% for group, items in toc_groups.items() %}
+        <section>
+          <h3>{{ group }}</h3>
+          <div>
+            {% for item in items %}
+            <article>
+              <h4>{{ item.label }}</h4>
+              <p>{{ item.summary }}</p>
+              <p><code>{{ item.path }}</code></p>
+              {% if item.url %}
+              <a href="{{ item.url }}">Open in DRL</a>
+              {% else %}
+              <span>Waiting for DRL app URL</span>
+              {% endif %}
+            </article>
+            {% endfor %}
+          </div>
+        </section>
+        {% endfor %}
+      </section>
+
+      <section>
+        <h2>Recommended Entry Path</h2>
+        <ol>
+          <li>Start with <code>/inventory</code> to see what material exists.</li>
+          <li>Use the two demos to understand the style of the app quickly.</li>
+          <li>Then move into the long-form arms: foundations, value-based, continuous control, and multi-agent.</li>
+          <li>Use Lunar only when you want the live runtime side rather than the archive/review side.</li>
+        </ol>
+      </section>
+    </main>
+  </body>
+  </html>

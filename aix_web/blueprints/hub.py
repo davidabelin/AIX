@@ -77,6 +77,10 @@ def _bridge_config_snapshot() -> dict:
             "models_dir_set": _present_env("C4_MODELS_DIR"),
             "exports_dir_set": _present_env("C4_EXPORTS_DIR"),
         },
+        "drl": {
+            "app_url_set": _present_env("AIX_DRL_APP_URL") or _present_env("DRL_APP_URL") or _present_env("DRL_PUBLIC_URL"),
+            "repo_override_set": _present_env("AIX_DRL_REPO"),
+        },
         "euclidorithm": {
             "repo_override_set": _present_env("AIX_EUCLIDORITHM_REPO"),
         },

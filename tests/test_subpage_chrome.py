@@ -21,6 +21,7 @@ def test_all_lab_home_pages_include_global_back_link():
     client = Client(app, Response)
     palette_by_path = {
         "/rps/": "#0f7b6d",
+        "/drl/": "#9a4d1a",
         "/c4/": "#8a1f2f",
         "/euclidorithm/": "#0a4f8b",
         "/polyfolds/": "#2f7d32",

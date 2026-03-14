@@ -30,6 +30,18 @@ LAB_PALETTES = {
         "bg": "#faf3f1",
         "bg_alt": "#f3e9e6",
     },
+    "drl": {
+        "accent": "#9a4d1a",
+        "accent_2": "#1f7a75",
+        "paper": "#fdf8f2",
+        "panel": "#fffdfa",
+        "line": "#e4d6cb",
+        "muted": "#6c5d56",
+        "brand": "#9a4d1a",
+        "brand_soft": "#f7e6d8",
+        "bg": "#faf5ef",
+        "bg_alt": "#eef6f5",
+    },
     "euclidorithm": {
         "accent": "#0a4f8b",
         "accent_2": "#b66d2f",

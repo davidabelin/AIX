@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import pytest
+from werkzeug.test import Client
+from werkzeug.wrappers import Response
 
-from aix_web import create_hub_app
+from aix_web import create_app, create_hub_app
 
 
 @pytest.fixture
@@ -22,6 +24,7 @@ def test_hub_home_renders(client):
     html = response.get_data(as_text=True)
     assert "Assorted Artificial Intelligence Labs" in html
     assert "/rps/" in html
+    assert "/drl/" in html
     assert "/c4/" in html
     assert "/euclidorithm/" in html
     assert "/polyfolds/" in html
@@ -32,9 +35,9 @@ def test_healthz_reports_configured_and_pending_labs(client):
     assert response.status_code == 200
     payload = response.get_json()
     assert payload["status"] == "ok"
-    assert set(payload["configured_labs"]) == {"rps", "c4", "euclidorithm", "polyfolds"}
+    assert set(payload["configured_labs"]) == {"rps", "drl", "c4", "euclidorithm", "polyfolds"}
     assert set(payload["mounted_labs"]) == set()
-    assert set(payload["pending_labs"]) == {"rps", "c4", "euclidorithm", "polyfolds"}
+    assert set(payload["pending_labs"]) == {"rps", "drl", "c4", "euclidorithm", "polyfolds"}
     assert payload["failed_labs"] == {}
 
 
@@ -78,7 +81,18 @@ def test_bridge_diagnostics_endpoint_exposes_config_snapshot(client):
     payload = response.get_json()
     assert payload["status"] == "ok"
     assert "bridge_config" in payload
-    assert set(payload["labs"].keys()) == {"rps", "c4", "euclidorithm", "polyfolds"}
+    assert set(payload["labs"].keys()) == {"rps", "drl", "c4", "euclidorithm", "polyfolds"}
+
+
+def test_drl_portal_page_renders(client):
+    app = create_app({"TESTING": True})
+    mounted_client = Client(app, Response)
+    response = mounted_client.get("/drl/")
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert "Deep RL Lab" in html
+    assert "Table Of Contents" in html
+    assert "AIX_DRL_APP_URL" in html
 
 
 def test_healthz_cloud_warnings_when_db_persistence_missing(monkeypatch):
