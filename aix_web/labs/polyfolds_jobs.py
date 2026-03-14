@@ -52,6 +52,12 @@ class PolyfoldsJobManager:
     def submit_job(self, payload: dict[str, Any]) -> dict[str, Any]:
         """Create and queue one Polyfolds job from API payload."""
 
+        if not self.repo_dir.exists():
+            raise ValueError(
+                "Polyfolds runtime repo is unavailable in this deployment. "
+                f"Expected repo_dir: {self.repo_dir}"
+            )
+
         kind = str(payload.get("kind", "dataset")).strip().lower()
         solid = str(payload.get("solid", "tetra")).strip().lower()
         params = payload.get("params", {})
@@ -238,4 +244,3 @@ class PolyfoldsJobManager:
                 finished_at=utcnow_iso(),
                 error_message=str(exc),
             )
-

@@ -131,7 +131,7 @@
 
       .toc-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+        grid-template-columns: 1fr;
         gap: 0.85rem;
       }
 
@@ -143,6 +143,7 @@
       .toc-table {
         width: 100%;
         border-collapse: collapse;
+        table-layout: fixed;
       }
 
       .toc-table th,
@@ -306,7 +307,8 @@
 
       .row-path {
         color: var(--muted);
-        white-space: nowrap;
+        white-space: normal;
+        overflow-wrap: anywhere;
       }
 
       .launch-link,
@@ -334,11 +336,6 @@
         section {
           padding: 0.9rem;
         }
-
-        .toc-grid {
-          grid-template-columns: 1fr;
-        }
-
         .toc-table {
           display: block;
           overflow-x: auto;
