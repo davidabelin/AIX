@@ -4,28 +4,369 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Deep RL Lab | AIX Portal</title>
+    <style>
+      :root {
+        --ink: #1f1f24;
+        --paper: #fff8ef;
+        --panel: rgba(255, 253, 249, 0.94);
+        --accent: #0f7b6d;
+        --line: #dfd8ce;
+        --muted: #615f67;
+        --shadow: 0 12px 28px rgba(22, 18, 12, 0.08);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at 18% 10%, rgba(255, 226, 190, 0.9), transparent 35%),
+          radial-gradient(circle at 82% 18%, rgba(212, 242, 234, 0.9), transparent 32%),
+          linear-gradient(160deg, #fffaf4, #f5efe6);
+      }
+
+      main {
+        width: min(1040px, 92vw);
+        margin: 0 auto;
+        padding: 1.6rem 0 2.2rem;
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      section {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 1rem 1.1rem;
+      }
+
+      h1, h2, h3 {
+        margin: 0;
+        font-family: "Baskervville", Georgia, serif;
+        font-weight: 400;
+      }
+
+      h1 {
+        font-size: clamp(1.8rem, 4vw, 2.7rem);
+        margin-top: 0.2rem;
+      }
+
+      h2 {
+        font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+        margin-bottom: 0.5rem;
+      }
+
+      h3 {
+        font-size: 1.15rem;
+        margin-bottom: 0.5rem;
+      }
+
+      p, li, td, th, a, span, code {
+        font-size: 0.95rem;
+      }
+
+      p {
+        margin: 0.2rem 0 0;
+        color: var(--muted);
+      }
+
+      ul, ol {
+        margin: 0.5rem 0 0;
+        padding-left: 1.15rem;
+        color: var(--muted);
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        background: rgba(15, 123, 109, 0.08);
+        padding: 0.08rem 0.3rem;
+        border-radius: 8px;
+      }
+
+      .eyebrow {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--accent);
+        font-size: 0.74rem;
+      }
+
+      .hero-meta,
+      .quick-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+        margin-top: 0.8rem;
+      }
+
+      .quick-link,
+      .quick-link-muted {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.1rem;
+        padding: 0.42rem 0.72rem;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.84);
+      }
+
+      .quick-link-muted {
+        color: var(--muted);
+        background: rgba(245, 239, 230, 0.86);
+      }
+
+      .toc-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+        gap: 0.85rem;
+      }
+
+      .toc-panel {
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .toc-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .toc-table th,
+      .toc-table td {
+        padding: 0.55rem 0.45rem;
+        text-align: left;
+        vertical-align: top;
+        border-top: 1px solid rgba(223, 216, 206, 0.85);
+      }
+
+      .toc-table thead th {
+        padding-top: 0;
+        border-top: 0;
+        color: var(--muted);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+      }
+
+      .toc-table td:first-child,
+      .toc-table th:first-child {
+        width: 74px;
+      }
+
+      .thumbnail {
+        width: 58px;
+        aspect-ratio: 1 / 1;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.5),
+          0 8px 18px rgba(22, 18, 12, 0.12);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .thumbnail::before,
+      .thumbnail::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+      }
+
+      .thumbnail::before {
+        background:
+          radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.7), transparent 28%),
+          linear-gradient(150deg, rgba(255, 255, 255, 0.16), transparent 46%);
+      }
+
+      .thumbnail::after {
+        inset: auto 0 0 0;
+        height: 34%;
+        background: linear-gradient(180deg, transparent, rgba(19, 18, 31, 0.16));
+      }
+
+      .thumb-overview { background: linear-gradient(145deg, #15a18a, #0f7b6d); }
+      .thumb-overview::before {
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.18) 40%, transparent 42%),
+          linear-gradient(90deg, transparent 18%, rgba(255, 255, 255, 0.75) 18% 24%, transparent 24% 34%, rgba(255, 255, 255, 0.62) 34% 40%, transparent 40%);
+      }
+
+      .thumb-inventory { background: linear-gradient(145deg, #e8bb58, #d48c34); }
+      .thumb-inventory::before {
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.2) 34%, transparent 34%),
+          repeating-linear-gradient(180deg, transparent 0 7px, rgba(255,255,255,0.7) 7px 10px);
+      }
+
+      .thumb-demo-foundations { background: linear-gradient(145deg, #5ca0f0, #2f74c7); }
+      .thumb-demo-foundations::before {
+        background:
+          radial-gradient(circle at 28% 68%, rgba(255,255,255,0.88) 0 10%, transparent 12%),
+          radial-gradient(circle at 50% 45%, rgba(255,255,255,0.82) 0 9%, transparent 11%),
+          radial-gradient(circle at 74% 28%, rgba(255,255,255,0.75) 0 8%, transparent 10%),
+          linear-gradient(135deg, transparent 25%, rgba(255,255,255,0.62) 25% 28%, transparent 28% 48%, rgba(255,255,255,0.54) 48% 51%, transparent 51%);
+      }
+
+      .thumb-demo-finance,
+      .thumb-finance { background: linear-gradient(145deg, #2b8e5b, #106c47); }
+
+      .thumb-demo-finance::before,
+      .thumb-finance::before {
+        background:
+          linear-gradient(180deg, transparent 56%, rgba(255,255,255,0.75) 56% 60%, transparent 60%),
+          linear-gradient(135deg, transparent 26%, rgba(255,255,255,0.82) 26% 31%, transparent 31% 46%, rgba(255,255,255,0.7) 46% 51%, transparent 51% 61%, rgba(255,255,255,0.9) 61% 66%, transparent 66%);
+      }
+
+      .thumb-lunar { background: linear-gradient(145deg, #0b1529, #314bd2); }
+      .thumb-lunar::before {
+        background:
+          radial-gradient(circle at 72% 22%, rgba(255,255,255,0.92) 0 6%, transparent 8%),
+          radial-gradient(circle at 42% 68%, #cfd6ff 0 17%, transparent 19%),
+          linear-gradient(135deg, transparent 46%, rgba(255,255,255,0.82) 46% 51%, transparent 51%);
+      }
+
+      .thumb-foundations { background: linear-gradient(145deg, #6d63d6, #4d3db1); }
+      .thumb-foundations::before {
+        background:
+          repeating-linear-gradient(90deg, transparent 0 10px, rgba(255,255,255,0.62) 10px 13px),
+          linear-gradient(180deg, rgba(255,255,255,0.82), transparent 34%);
+      }
+
+      .thumb-value-based { background: linear-gradient(145deg, #ff7e52, #d94f31); }
+      .thumb-value-based::before {
+        background:
+          linear-gradient(135deg, transparent 28%, rgba(255,255,255,0.82) 28% 33%, transparent 33% 47%, rgba(255,255,255,0.7) 47% 52%, transparent 52%),
+          radial-gradient(circle at 68% 30%, rgba(255,255,255,0.82) 0 8%, transparent 10%);
+      }
+
+      .thumb-policy { background: linear-gradient(145deg, #c96ddb, #9142c7); }
+      .thumb-policy::before {
+        background:
+          radial-gradient(circle at 24% 70%, rgba(255,255,255,0.78) 0 9%, transparent 11%),
+          radial-gradient(circle at 52% 46%, rgba(255,255,255,0.86) 0 9%, transparent 11%),
+          radial-gradient(circle at 78% 26%, rgba(255,255,255,0.74) 0 8%, transparent 10%);
+      }
+
+      .thumb-continuous { background: linear-gradient(145deg, #1c8e98, #136a7f); }
+      .thumb-continuous::before {
+        background:
+          linear-gradient(90deg, transparent 24%, rgba(255,255,255,0.78) 24% 28%, transparent 28% 50%, rgba(255,255,255,0.62) 50% 54%, transparent 54%),
+          radial-gradient(circle at 64% 30%, rgba(255,255,255,0.74) 0 9%, transparent 11%);
+      }
+
+      .thumb-multi-agent { background: linear-gradient(145deg, #d65c86, #a93058); }
+      .thumb-multi-agent::before {
+        background:
+          radial-gradient(circle at 26% 32%, rgba(255,255,255,0.9) 0 9%, transparent 11%),
+          radial-gradient(circle at 70% 32%, rgba(255,255,255,0.82) 0 9%, transparent 11%),
+          radial-gradient(circle at 48% 68%, rgba(255,255,255,0.74) 0 8%, transparent 10%),
+          linear-gradient(135deg, transparent 34%, rgba(255,255,255,0.58) 34% 37%, transparent 37% 50%, rgba(255,255,255,0.58) 50% 53%, transparent 53%);
+      }
+
+      .thumb-papers { background: linear-gradient(145deg, #8d7a69, #66513f); }
+      .thumb-papers::before {
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.12) 40%, transparent 40%),
+          repeating-linear-gradient(180deg, transparent 0 7px, rgba(255,255,255,0.6) 7px 9px);
+      }
+
+      .thumb-archive { background: linear-gradient(145deg, #66738f, #455067); }
+      .thumb-archive::before {
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.76), rgba(255,255,255,0.1) 42%, transparent 42%),
+          linear-gradient(90deg, transparent 18%, rgba(255,255,255,0.62) 18% 24%, transparent 24% 44%, rgba(255,255,255,0.46) 44% 50%, transparent 50%);
+      }
+
+      .row-title {
+        display: block;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 0.15rem;
+      }
+
+      .row-summary {
+        display: block;
+        color: var(--muted);
+        line-height: 1.35;
+      }
+
+      .row-path {
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .launch-link,
+      .launch-pending {
+        display: inline-flex;
+        min-height: 2rem;
+        align-items: center;
+        justify-content: center;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.85);
+      }
+
+      .launch-pending {
+        color: var(--muted);
+        background: rgba(245, 239, 230, 0.92);
+      }
+
+      @media (max-width: 760px) {
+        main {
+          width: min(96vw, 1040px);
+        }
+
+        section {
+          padding: 0.9rem;
+        }
+
+        .toc-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .toc-table {
+          display: block;
+          overflow-x: auto;
+        }
+      }
+    </style>
   </head>
   <body>
     <main>
       <section>
-        <p>Separate Runtime + AIX Directory</p>
+        <p class="eyebrow">Separate Runtime + AIX Directory</p>
         <h1>Deep RL Lab</h1>
         <p>
           DRL stays a separate web application. AIX gives it a stable entry page, a readable table of contents,
           and one place to explain where the live app belongs in the broader lab ecosystem.
         </p>
         {% if external_url %}
-        <p><strong>Live sister app:</strong> <a href="{{ external_url }}">{{ external_url }}</a></p>
+        <div class="hero-meta"><span><strong>Live sister app:</strong> <a href="{{ external_url }}">{{ external_url }}</a></span></div>
         {% else %}
-        <p><strong>Live sister app:</strong> not configured yet. Set <code>AIX_DRL_APP_URL</code> when the external DRL deployment is ready.</p>
+        <div class="hero-meta"><span><strong>Live sister app:</strong> not configured yet. Set <code>AIX_DRL_APP_URL</code> when the external DRL deployment is ready.</span></div>
         {% endif %}
         <p><strong>Local repo:</strong> <code>{{ repo_root }}</code> {% if repo_present %}(detected){% else %}(not present in this runtime){% endif %}</p>
-        <div>
+        <div class="quick-links">
           {% for item in quick_links %}
             {% if item.enabled and item.url %}
-            <a href="{{ item.url }}">{{ item.label }}</a>
+            <a class="quick-link" href="{{ item.url }}">{{ item.label }}</a>
             {% else %}
-            <span>{{ item.label }} (configure URL)</span>
+            <span class="quick-link-muted">{{ item.label }} (configure URL)</span>
             {% endif %}
           {% endfor %}
         </div>
@@ -43,25 +384,42 @@
       <section>
         <h2>Table Of Contents</h2>
         <p>This is the AIX-facing guide to the DRL app’s major pages and branches.</p>
-        {% for group, items in toc_groups.items() %}
-        <section>
-          <h3>{{ group }}</h3>
-          <div>
-            {% for item in items %}
-            <article>
-              <h4>{{ item.label }}</h4>
-              <p>{{ item.summary }}</p>
-              <p><code>{{ item.path }}</code></p>
-              {% if item.url %}
-              <a href="{{ item.url }}">Open in DRL</a>
-              {% else %}
-              <span>Waiting for DRL app URL</span>
-              {% endif %}
-            </article>
-            {% endfor %}
-          </div>
-        </section>
-        {% endfor %}
+        <div class="toc-grid">
+          {% for group, items in toc_groups.items() %}
+          <section class="toc-panel">
+            <h3>{{ group }}</h3>
+            <table class="toc-table">
+              <thead>
+                <tr>
+                  <th>Preview</th>
+                  <th>Route</th>
+                  <th>Path</th>
+                  <th>Launch</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in items %}
+                <tr>
+                  <td><div class="thumbnail thumb-{{ item.thumbnail }}" aria-hidden="true"></div></td>
+                  <td>
+                    <span class="row-title">{{ item.label }}</span>
+                    <span class="row-summary">{{ item.summary }}</span>
+                  </td>
+                  <td><code class="row-path">{{ item.path }}</code></td>
+                  <td>
+                    {% if item.url %}
+                    <a class="launch-link" href="{{ item.url }}">Open in DRL</a>
+                    {% else %}
+                    <span class="launch-pending">Waiting for URL</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </section>
+          {% endfor %}
+        </div>
       </section>
 
       <section>
@@ -75,4 +433,4 @@
       </section>
     </main>
   </body>
-  </html>
+</html>

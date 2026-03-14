@@ -19,22 +19,23 @@ class DrlLink:
     path: str
     summary: str
     group: str
+    thumbnail: str
 
 
 DRL_LINKS: tuple[DrlLink, ...] = (
-    DrlLink("Overview", "/", "Main landing page for the DRL sister app.", "Core"),
-    DrlLink("Inventory", "/inventory", "Repository-wide inventory and recovery map.", "Core"),
-    DrlLink("Foundations Demo", "/demos/foundations", "Interactive warm-up demo for the foundational RL arm.", "Interactive"),
-    DrlLink("Finance Demo", "/demos/finance", "Interactive finance execution demo.", "Interactive"),
-    DrlLink("Lunar Lander", "/lunar", "Live Lunar runtime, checkpoints, and training jobs.", "Interactive"),
-    DrlLink("Foundations", "/sections/foundations", "Tabular RL, dynamic programming, MC, TD, and early labs.", "Arms"),
-    DrlLink("Value-Based", "/sections/value-based", "DQN lineage, navigation, and Lunar variants.", "Arms"),
-    DrlLink("Policy Gradients", "/sections/policy-gradients", "REINFORCE, PPO, actor-critic, and Pong-era material.", "Arms"),
-    DrlLink("Continuous Control", "/sections/continuous-control", "Reacher, DDPG, and Unity-heavy recovery work.", "Arms"),
-    DrlLink("Multi-Agent", "/sections/multi-agent", "Tennis, Soccer, MARL notes, and theory material.", "Arms"),
-    DrlLink("Finance", "/sections/finance", "Domain application branch for RL-guided execution.", "Arms"),
-    DrlLink("Papers", "/sections/papers", "Reference shelf for the educational side of DRL.", "Archive"),
-    DrlLink("Archive", "/sections/archive", "Legacy branches kept visible but not yet productized.", "Archive"),
+    DrlLink("Overview", "/", "Main landing page for the DRL sister app.", "Core", "overview"),
+    DrlLink("Inventory", "/inventory", "Repository-wide inventory and recovery map.", "Core", "inventory"),
+    DrlLink("Foundations Demo", "/demos/foundations", "Interactive warm-up demo for the foundational RL arm.", "Interactive", "demo-foundations"),
+    DrlLink("Finance Demo", "/demos/finance", "Interactive finance execution demo.", "Interactive", "demo-finance"),
+    DrlLink("Lunar Lander", "/lunar", "Live Lunar runtime, checkpoints, and training jobs.", "Interactive", "lunar"),
+    DrlLink("Foundations", "/sections/foundations", "Tabular RL, dynamic programming, MC, TD, and early labs.", "Arms", "foundations"),
+    DrlLink("Value-Based", "/sections/value-based", "DQN lineage, navigation, and Lunar variants.", "Arms", "value-based"),
+    DrlLink("Policy Gradients", "/sections/policy-gradients", "REINFORCE, PPO, actor-critic, and Pong-era material.", "Arms", "policy"),
+    DrlLink("Continuous Control", "/sections/continuous-control", "Reacher, DDPG, and Unity-heavy recovery work.", "Arms", "continuous"),
+    DrlLink("Multi-Agent", "/sections/multi-agent", "Tennis, Soccer, MARL notes, and theory material.", "Arms", "multi-agent"),
+    DrlLink("Finance", "/sections/finance", "Domain application branch for RL-guided execution.", "Arms", "finance"),
+    DrlLink("Papers", "/sections/papers", "Reference shelf for the educational side of DRL.", "Archive", "papers"),
+    DrlLink("Archive", "/sections/archive", "Legacy branches kept visible but not yet productized.", "Archive", "archive"),
 )
 
 
@@ -63,6 +64,7 @@ def _build_context() -> dict:
                 "label": item.label,
                 "path": item.path,
                 "summary": item.summary,
+                "thumbnail": item.thumbnail,
                 "url": (urljoin(f"{external_url}/", item.path.lstrip("/")) if external_url else None),
             }
         )

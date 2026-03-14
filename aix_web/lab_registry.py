@@ -75,7 +75,7 @@ def build_lab_specs() -> list[LabSpec]:
             ),
             LabSpec(
                 slug="c4",
-                display_name="Connect4 Agent Lab",
+                display_name="Connect4",
                 nav_order=15,
                 summary="Connect4 gameplay, supervised training, and RL experiments.",
                 loader=load_c4_app,
