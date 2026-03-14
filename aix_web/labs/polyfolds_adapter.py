@@ -21,7 +21,7 @@ def load_polyfolds_app() -> Flask:
         static_folder=str(app_root / "static"),
     )
     repo_override = str(os.getenv("AIX_POLYFOLDS_REPO", "")).strip()
-    repo_dir = Path(repo_override).expanduser() if repo_override else (AIX_ROOT / ".." / "geometry" / "polyfolds")
+    repo_dir = Path(repo_override).expanduser() if repo_override else (AIX_ROOT / ".." / "pf" / "polyfolds")
     jobs_root_override = str(os.getenv("AIX_POLYFOLDS_JOBS_ROOT", "")).strip()
     if jobs_root_override:
         jobs_root = Path(jobs_root_override).expanduser()

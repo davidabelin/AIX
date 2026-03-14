@@ -93,7 +93,7 @@ def build_lab_specs() -> list[LabSpec]:
                 slug="polyfolds",
                 display_name="Polyfolds",
                 nav_order=30,
-                summary="Polyhedral net generation and dataset tooling (web shell placeholder).",
+                summary="Standalone polyhedral net classification and repair lab.",
                 loader=load_polyfolds_app,
                 enabled=("polyfolds" in enabled_slugs),
             ),

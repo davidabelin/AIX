@@ -8,6 +8,6 @@ dispatch:
   - url: "*/euclidorithm/*"
     service: euclidorithm
   - url: "*/polyfolds/*"
-    service: default
+    service: polyfolds
   - url: "*/*"
     service: default

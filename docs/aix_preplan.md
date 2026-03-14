@@ -51,7 +51,7 @@ Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/
 1. Add a new umbrella package: `aix_web`.
 2. Keep existing RPS packages (`rps_web`, `rps_core`, `rps_agents`, `rps_training`, `rps_rl`, `rps_storage`) intact initially.
 3. Add lab adapters in `aix_web` that mount each lab under URL prefixes.
-4. Gradually normalize `geometry/euclidorithm` and `geometry/polyfolds` to the same shell conventions used by RPS.
+4. Gradually normalize `geometry/euclidorithm` and `pf/polyfolds` to the same shell conventions used by RPS.
 
 ## Ideal local file structure (target state)
 1. `aix_web/__init__.py` (new app factory).
@@ -64,7 +64,7 @@ Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/
 8. `aix_web/labs/euclidorithm_adapter.py` (mount geometry/euclidorithm first as wrapped module).
 9. `aix_web/labs/polyfolds_adapter.py` (initial placeholder + data/training module bridge).
 10. `geometry/euclidorithm/*` (existing code retained initially, wrapped).
-11. `geometry/polyfolds/*` (existing/ongoing data-generation assets retained initially).
+11. `pf/polyfolds/*` (existing/ongoing data-generation assets retained initially).
 
 ## Important changes/additions to public APIs/interfaces/types
 1. New URL contract:
@@ -107,7 +107,7 @@ Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/
 1. Phase 0: Scaffold `aix_web` shell and hub homepage.
 2. Phase 1: Mount RPS under `/rps/*` via adapter and add legacy redirects.
 3. Phase 2: Add `geometry/euclidorithm` wrapper routes and shared shell integration.
-4. Phase 3: Add `geometry/polyfolds` wrapper with placeholder web lab + data hooks.
+4. Phase 3: Add `pf/polyfolds` wrapper with placeholder web lab + data hooks.
 5. Phase 4: Shared theming + navigation consistency pass across all labs.
 6. Phase 5: AIX deployment config for new GCP project (staging first).
 
