@@ -18,10 +18,10 @@
     <p>{{ mount.spec.summary }}</p>
     {% if card.status == "mounted" %}
     <p class="status status-ok">Status: mounted</p>
-    <a class="btn btn-primary" href="/{{ mount.spec.slug }}/">Open {{ mount.spec.slug }}</a>
+    <a class="btn btn-primary" href="/{{ mount.spec.slug }}/">Open {{ mount.spec.display_name }}</a>
     {% elif card.status == "pending" %}
     <p class="status">Status: pending (loads on first request)</p>
-    <a class="btn btn-primary" href="/{{ mount.spec.slug }}/">Open {{ mount.spec.slug }}</a>
+    <a class="btn btn-primary" href="/{{ mount.spec.slug }}/">Open {{ mount.spec.display_name }}</a>
     {% elif card.status == "disabled" %}
     <p class="status status-error">Status: disabled</p>
     <button class="btn btn-secondary" type="button" disabled>Disabled</button>
