@@ -7,6 +7,7 @@ echo ==== AIX Cloud Status ====
 echo Project: %PROJECT_ID%
 echo Region : %REGION%
 echo SA     : %SA_EMAIL%
+echo DRL URL: %AIX_DRL_APP_URL%
 
 echo.
 echo ^> gcloud auth list
@@ -41,21 +42,24 @@ echo ^> gcloud storage buckets list --project="%PROJECT_ID%" --format="table(nam
 gcloud storage buckets list --project="%PROJECT_ID%" --format="table(name,location,locationType,storageClass)"
 if errorlevel 1 goto :fail
 echo.
-echo ^> gcloud artifacts repositories list --project="%PROJECT_ID%" --location=all
-gcloud artifacts repositories list --project="%PROJECT_ID%" --location=all
-if errorlevel 1 goto :fail
-echo.
-echo ^> gcloud run services list --project="%PROJECT_ID%" --region="%REGION%"
-gcloud run services list --project="%PROJECT_ID%" --region="%REGION%"
+echo ^> gcloud app describe --project="%PROJECT_ID%"
+gcloud app describe --project="%PROJECT_ID%"
 if errorlevel 1 goto :fail
 
 echo.
-echo ^> gcloud app describe --project="%PROJECT_ID%"
-gcloud app describe --project="%PROJECT_ID%"
-if errorlevel 1 (
-  echo.
-  echo [INFO] No App Engine app exists yet for %PROJECT_ID%. That is expected for the Cloud Run path.
-)
+echo ^> gcloud app services list --project="%PROJECT_ID%"
+gcloud app services list --project="%PROJECT_ID%"
+if errorlevel 1 goto :fail
+
+echo.
+echo ^> gcloud app versions list --project="%PROJECT_ID%"
+gcloud app versions list --project="%PROJECT_ID%"
+if errorlevel 1 goto :fail
+
+echo.
+echo ^> gcloud app dispatch-rules list --project="%PROJECT_ID%"
+gcloud app dispatch-rules list --project="%PROJECT_ID%"
+if errorlevel 1 goto :fail
 
 echo.
 echo ^> gcloud secrets list --project="%PROJECT_ID%"

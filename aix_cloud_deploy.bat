@@ -3,28 +3,45 @@ setlocal
 call "%~dp0aix_cloud_env.bat"
 pushd "%~dp0" >nul 2>&1
 if errorlevel 1 goto :fail
-set "SOURCE_DIR=%CD%"
 
 echo.
-echo ==== AIX Cloud Deploy ====
+echo ==== AIX App Engine Deploy ====
 echo Project : %PROJECT_ID%
 echo Region  : %REGION%
 echo Service : %SERVICE_NAME%
-echo Source  : %SOURCE_DIR%
-echo Memory  : %RUN_MEMORY%
-echo CPU     : %RUN_CPU%
+echo DRL URL : %AIX_DRL_APP_URL%
 
 echo.
-echo ^> gcloud run deploy %SERVICE_NAME% --project="%PROJECT_ID%" --region="%REGION%" --source . --service-account="%SA_EMAIL%" --allow-unauthenticated --memory="%RUN_MEMORY%" --cpu="%RUN_CPU%" --set-env-vars="AIX_HUB_URL=/,DRL_LUNAR_JOBS_ROOT=/tmp/drl_lunar_jobs,DRL_LUNAR_MAX_WORKERS=1"
-gcloud run deploy %SERVICE_NAME% --project="%PROJECT_ID%" --region="%REGION%" --source . --service-account="%SA_EMAIL%" --allow-unauthenticated --memory="%RUN_MEMORY%" --cpu="%RUN_CPU%" --set-env-vars="AIX_HUB_URL=/,DRL_LUNAR_JOBS_ROOT=/tmp/drl_lunar_jobs,DRL_LUNAR_MAX_WORKERS=1"
+echo [1/4] Previewing upload payload...
+call gcloud meta list-files-for-upload > upload-list.txt
 if errorlevel 1 goto :fail_popd
+for /f %%i in ('find /c /v "" ^< upload-list.txt') do set UPLOAD_COUNT=%%i
+echo Upload file count: %UPLOAD_COUNT%
+
 echo.
-echo ^> gcloud run services describe %SERVICE_NAME% --project="%PROJECT_ID%" --region="%REGION%" --format="yaml(metadata.name,status.url,spec.template.spec.serviceAccountName,spec.template.spec.containers[0].resources,spec.template.spec.containers[0].env)"
-gcloud run services describe %SERVICE_NAME% --project="%PROJECT_ID%" --region="%REGION%" --format="yaml(metadata.name,status.url,spec.template.spec.serviceAccountName,spec.template.spec.containers[0].resources,spec.template.spec.containers[0].env)"
+echo [2/4] Deploying default App Engine service...
+echo ^> gcloud app deploy app.yaml --project="%PROJECT_ID%" --quiet
+call gcloud app deploy app.yaml --project="%PROJECT_ID%" --quiet
 if errorlevel 1 goto :fail_popd
 
 echo.
-echo [OK] Deploy finished.
+echo [3/4] Deploying dispatch rules...
+echo ^> gcloud app deploy dispatch.yaml --project="%PROJECT_ID%" --quiet
+call gcloud app deploy dispatch.yaml --project="%PROJECT_ID%" --quiet
+if errorlevel 1 goto :fail_popd
+
+echo.
+echo [4/4] Verifying deployed services...
+echo ^> gcloud app services list --project="%PROJECT_ID%"
+call gcloud app services list --project="%PROJECT_ID%"
+if errorlevel 1 goto :fail_popd
+echo.
+echo ^> gcloud app versions list --project="%PROJECT_ID%"
+call gcloud app versions list --project="%PROJECT_ID%"
+if errorlevel 1 goto :fail_popd
+
+echo.
+echo [OK] App Engine deploy finished.
 popd >nul
 endlocal
 exit /b 0
