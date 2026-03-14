@@ -1,4 +1,6 @@
 dispatch:
+  - url: "polyfolds-dot-aix-labs.uw.r.appspot.com/*"
+    service: polyfolds
   - url: "*/api/v1/*"
     service: rps
   - url: "*/rps/*"

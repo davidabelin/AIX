@@ -7,5 +7,5 @@ set "SA_EMAIL=aix-admin@aix-labs.iam.gserviceaccount.com"
 set "REPO_NAME=aix"
 set "BUCKET_NAME=aix-labs-data"
 set "SERVICE_NAME=default"
-set "AIX_DRL_APP_URL=https://directed-sonar-429119-u2.uw.r.appspot.com"
+set "AIX_DRL_APP_URL=https://drl-web-x2ulcmhaiq-wm.a.run.app"
 exit /b 0

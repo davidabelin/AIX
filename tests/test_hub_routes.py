@@ -109,3 +109,19 @@ def test_healthz_cloud_warnings_when_db_persistence_missing(monkeypatch):
     warnings = payload["runtime_warnings"]
     assert any("RPS persistence is not configured" in item for item in warnings)
     assert any("C4 persistence is not configured" in item for item in warnings)
+
+
+@pytest.mark.parametrize(
+    ("path", "target"),
+    [
+        ("/", "/polyfolds/"),
+        ("/healthz", "/polyfolds/healthz"),
+        ("/jobs?id=7", "/polyfolds/jobs?id=7"),
+    ],
+)
+def test_polyfolds_service_host_redirects_into_polyfolds_mount(path: str, target: str):
+    app = create_hub_app({"TESTING": True})
+    client = app.test_client()
+    response = client.get(path, headers={"Host": "polyfolds-dot-aix-labs.uw.r.appspot.com"}, follow_redirects=False)
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith(target)

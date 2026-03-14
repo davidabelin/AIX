@@ -4,6 +4,6 @@ entrypoint: gunicorn -b :$PORT run:app
 env_variables:
   # Hub-only service. Lab subpaths are dispatched to dedicated services.
   AIX_ENABLED_LABS: rps,drl,c4,euclidorithm,polyfolds
-  AIX_DRL_APP_URL: https://directed-sonar-429119-u2.uw.r.appspot.com
+  AIX_DRL_APP_URL: https://drl-web-x2ulcmhaiq-wm.a.run.app
 
 service_account: aix-admin@aix-labs.iam.gserviceaccount.com

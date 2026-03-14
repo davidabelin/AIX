@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flask import Flask
+from flask import Flask, redirect, request
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from aix_web.blueprints.hub import hub_bp
@@ -25,6 +25,19 @@ def create_hub_app(config: dict | None = None) -> Flask:
     )
     if config:
         app.config.update(config)
+
+    @app.before_request
+    def redirect_polyfolds_service_host():
+        host = (request.host or "").split(":", 1)[0].lower()
+        if host != "polyfolds-dot-aix-labs.uw.r.appspot.com":
+            return None
+        path = request.path or "/"
+        if path.startswith("/polyfolds"):
+            return None
+        target = "/polyfolds/" if path == "/" else f"/polyfolds{path}"
+        if request.query_string:
+            target = f"{target}?{request.query_string.decode('utf-8', errors='ignore')}"
+        return redirect(target, code=302)
 
     specs = build_lab_specs()
     mounts = resolve_lab_mounts(specs)
