@@ -1,0 +1,32 @@
+{% extends "base_hub.html" %}
+{% block title %}AIX | Table of Contents{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">Detailed Navigation</p>
+  <h1>AIX Table of Contents</h1>
+  <p class="lede">
+    This is the longer-form AIX directory page for the current hub and lab arms. It is separate from the splash hub
+    and lists public routes with short descriptions. Sister DRL is intentionally excluded here.
+  </p>
+</section>
+
+<section class="stack">
+  {% for section in toc_sections %}
+  <article class="detail-card detail-card-wide">
+    <h2>{{ section.title }}</h2>
+    <p>{{ section.summary }}</p>
+    <div class="toc-route-list">
+      {% for route in section.routes %}
+      <div class="toc-route">
+        <a class="toc-route-path" href="{{ route.path }}"><code>{{ route.path }}</code></a>
+        <div class="toc-route-copy">
+          <strong>{{ route.label }}</strong>
+          <span>{{ route.summary }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

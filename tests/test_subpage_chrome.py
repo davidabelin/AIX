@@ -14,6 +14,10 @@ def test_polyfolds_page_includes_global_back_link():
     html = response.get_data(as_text=True)
     assert 'id="aix-subpage-back"' in html
     assert "Back to AIX Hub" in html
+    assert "GNU copyright 2026 AIX Protodyne" in html
+    assert "Contact Us" in html
+    assert "Privacy" in html
+    assert "AIX TOC" in html
 
 
 def test_all_lab_home_pages_include_global_back_link():
@@ -32,4 +36,8 @@ def test_all_lab_home_pages_include_global_back_link():
         html = response.get_data(as_text=True)
         assert 'id="aix-subpage-back"' in html
         assert "Back to AIX Hub" in html
+        assert "GNU copyright 2026 AIX Protodyne" in html
+        assert "Contact Us" in html
+        assert "Privacy" in html
+        assert "AIX TOC" in html
         assert f"--accent: {accent}" in html

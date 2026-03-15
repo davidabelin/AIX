@@ -95,6 +95,36 @@ def test_drl_portal_page_renders(client):
     assert "AIX_DRL_APP_URL" in html
 
 
+@pytest.mark.parametrize(
+    "path",
+    ["/", "/contact", "/privacy", "/toc"],
+)
+def test_aix_pages_include_footer_links(path: str):
+    app = create_hub_app({"TESTING": True})
+    client = app.test_client()
+    response = client.get(path)
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert "GNU copyright 2026 AIX Protodyne" in html
+    assert "Contact Us" in html
+    assert "Privacy" in html
+    assert "AIX TOC" in html
+
+
+def test_toc_page_excludes_drl_but_lists_current_aix_arms():
+    app = create_hub_app({"TESTING": True})
+    client = app.test_client()
+    response = client.get("/toc")
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert "AIX Table of Contents" in html
+    assert "Sister DRL is intentionally excluded here." in html
+    assert "/rps/play" in html
+    assert "/c4/play" in html
+    assert "/euclidorithm/gear" in html
+    assert "/polyfolds/" in html
+
+
 def test_healthz_cloud_warnings_when_db_persistence_missing(monkeypatch):
     monkeypatch.setenv("GAE_ENV", "standard")
     monkeypatch.delenv("RPS_DATABASE_URL", raising=False)

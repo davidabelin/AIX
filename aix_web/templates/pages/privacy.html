@@ -1,0 +1,52 @@
+{% extends "base_hub.html" %}
+{% block title %}AIX | Privacy{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">Operational Disclosure</p>
+  <h1>Privacy</h1>
+  <p class="lede">
+    This page describes the current behavior of AIX Labs and its active lab arms. It is a narrow, project-specific
+    description of the current stack and workflow, not a broad legal policy for unrelated services.
+  </p>
+</section>
+
+<section class="detail-grid">
+  <article class="detail-card">
+    <h2>What the labs may store</h2>
+    <p>
+      AIX lab pages may store gameplay data, training-session records, model metadata, job status, and operational
+      events needed to run the labs and inspect their results.
+    </p>
+  </article>
+  <article class="detail-card">
+    <h2>Cloud services</h2>
+    <p>
+      Deployed apps may use Google Cloud services configured for the project, including application hosting, storage,
+      logs, secrets, and database-backed persistence where enabled.
+    </p>
+  </article>
+  <article class="detail-card">
+    <h2>What the labs are not</h2>
+    <p>
+      These labs are not currently presented as ad-supported consumer products. No account system or payment-processing
+      flow is currently exposed in the AIX labs.
+    </p>
+  </article>
+  <article class="detail-card">
+    <h2>Retention and debugging</h2>
+    <p>
+      User-submitted or generated gameplay and training data may be retained for experimentation, debugging, model
+      evaluation, or future model improvement within the active lab projects.
+    </p>
+  </article>
+</section>
+
+<section class="card prose-card">
+  <h2>Questions or removal requests</h2>
+  <p>
+    If you have a privacy question or want to raise a removal request tied to current AIX lab data, use the
+    <a href="{{ url_for('hub.contact_page') }}">Contact Us</a> page and the linked GitHub issue trackers so the request
+    lands in the correct project context.
+  </p>
+</section>
+{% endblock %}

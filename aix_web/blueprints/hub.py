@@ -91,6 +91,67 @@ def _bridge_config_snapshot() -> dict:
     }
 
 
+def _toc_sections() -> list[dict]:
+    specs = {spec.slug: spec for spec in current_app.extensions.get("lab_specs", [])}
+    return [
+        {
+            "title": "AIX Hub",
+            "summary": "Umbrella navigation, service status, and bridge diagnostics for the active AIX runtime.",
+            "routes": [
+                {"path": "/", "label": "Hub Home", "summary": "Primary splash page and launch surface for current AIX labs."},
+                {"path": "/healthz", "label": "Health", "summary": "JSON health summary for the AIX hub and mounted labs."},
+                {
+                    "path": "/diagnostics/bridges",
+                    "label": "Bridge Diagnostics",
+                    "summary": "JSON snapshot of bridge/runtime configuration and lab mount state.",
+                },
+            ],
+        },
+        {
+            "title": specs.get("rps").display_name if specs.get("rps") else "RPS Agent Lab",
+            "summary": specs.get("rps").summary if specs.get("rps") else "Rock-paper-scissors gameplay, training, RL, and arena play.",
+            "routes": [
+                {"path": "/rps/", "label": "RPS Home", "summary": "Launch page for the RPS lab."},
+                {"path": "/rps/play", "label": "Play", "summary": "Human-vs-agent gameplay with live session scoring and throw visualization."},
+                {"path": "/rps/arena", "label": "Arena", "summary": "Agent-vs-agent replay and spectator view for persisted matches."},
+                {"path": "/rps/training", "label": "Training", "summary": "Supervised model training, readiness, and registry management."},
+                {"path": "/rps/rl", "label": "RL", "summary": "Q-learning training jobs and reinforcement-learning experiment controls."},
+            ],
+        },
+        {
+            "title": specs.get("c4").display_name if specs.get("c4") else "Connect4",
+            "summary": specs.get("c4").summary if specs.get("c4") else "Connect4 gameplay, training, and arena analysis.",
+            "routes": [
+                {"path": "/c4/", "label": "Connect4 Home", "summary": "Launch page for the Connect4 lab."},
+                {"path": "/c4/play", "label": "Play", "summary": "Human-vs-agent Connect4 with board forecasts and session tracking."},
+                {"path": "/c4/arena", "label": "Arena", "summary": "Agent-vs-agent replay with recorded column-estimate overlays."},
+                {"path": "/c4/training", "label": "Training", "summary": "Curated supervised training over recorded Connect4 sessions."},
+                {"path": "/c4/rl", "label": "RL", "summary": "Tabular Q-learning controls and job monitoring for Connect4."},
+            ],
+        },
+        {
+            "title": specs.get("euclidorithm").display_name if specs.get("euclidorithm") else "Euclidorithm",
+            "summary": specs.get("euclidorithm").summary if specs.get("euclidorithm") else "Interactive Euclidean algorithm visualizations and models.",
+            "routes": [
+                {"path": "/euclidorithm/", "label": "Launch", "summary": "Main Euclidorithm landing page and lab entry."},
+                {"path": "/euclidorithm/table", "label": "Extended Table", "summary": "Extended Euclidean table view with Bezout coefficient progression."},
+                {"path": "/euclidorithm/extended", "label": "Extended Alias", "summary": "Alias route into the extended Euclidean table workflow."},
+                {"path": "/euclidorithm/wp", "label": "Word Problem Alias", "summary": "Alternate entry path that redirects into the table workflow."},
+                {"path": "/euclidorithm/quick", "label": "Quick Check", "summary": "Compact walkthrough of the Euclidean reduction sequence."},
+                {"path": "/euclidorithm/gear", "label": "Gear Model", "summary": "Mechanical/visual gear interpretation of Euclidean steps."},
+                {"path": "/euclidorithm/lock", "label": "Lock Model", "summary": "Lock-and-key style visualization of Euclidean structure."},
+            ],
+        },
+        {
+            "title": specs.get("polyfolds").display_name if specs.get("polyfolds") else "Polyfolds",
+            "summary": specs.get("polyfolds").summary if specs.get("polyfolds") else "Standalone polyhedral net classification and repair lab shell.",
+            "routes": [
+                {"path": "/polyfolds/", "label": "Polyfolds Home", "summary": "Standalone Polyfolds shell for the future trained-model interaction surface."},
+            ],
+        },
+    ]
+
+
 @hub_bp.get("/")
 def home() -> str:
     """Render AIX landing page with registered lab status cards."""
@@ -110,6 +171,21 @@ def home() -> str:
         lab_cards=cards,
         title=current_app.config.get("HUB_TITLE", "AIX"),
     )
+
+
+@hub_bp.get("/contact")
+def contact_page() -> str:
+    return render_template("pages/contact.html", title="Contact Us")
+
+
+@hub_bp.get("/privacy")
+def privacy_page() -> str:
+    return render_template("pages/privacy.html", title="Privacy")
+
+
+@hub_bp.get("/toc")
+def toc_page() -> str:
+    return render_template("pages/toc.html", title="AIX Table of Contents", toc_sections=_toc_sections())
 
 
 @hub_bp.get("/healthz")

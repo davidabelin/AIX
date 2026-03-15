@@ -1,0 +1,44 @@
+{% extends "base_hub.html" %}
+{% block title %}AIX | Contact Us{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">Support + Project Follow-Up</p>
+  <h1>Contact Us</h1>
+  <p class="lede">
+    AIX and its current lab arms are active development projects. Use the current GitHub issue trackers for bug
+    reports, feature requests, operational questions, and follow-up about model behavior or data handling.
+  </p>
+</section>
+
+<section class="detail-grid">
+  <article class="detail-card">
+    <h2>AIX</h2>
+    <p>Umbrella app issues, routing problems, hub content, and cross-lab integration questions.</p>
+    <a class="btn btn-primary" href="https://github.com/davidabelin/AIX/issues">Open AIX Issues</a>
+  </article>
+  <article class="detail-card">
+    <h2>RPS</h2>
+    <p>Gameplay bugs, training behavior, arena issues, and reinforcement-learning feedback for the RPS lab.</p>
+    <a class="btn btn-primary" href="https://github.com/davidabelin/rps/issues">Open RPS Issues</a>
+  </article>
+  <article class="detail-card">
+    <h2>Connect4</h2>
+    <p>Connect4 gameplay, training, RL, and arena issues belong in the Connect4 repository tracker.</p>
+    <a class="btn btn-primary" href="https://github.com/davidabelin/c4/issues">Open Connect4 Issues</a>
+  </article>
+  <article class="detail-card">
+    <h2>Polyfolds</h2>
+    <p>Polyfolds service issues and future net-classification app feedback should go through the PF tracker.</p>
+    <a class="btn btn-primary" href="https://github.com/davidabelin/pf/issues">Open PF Issues</a>
+  </article>
+</section>
+
+<section class="card prose-card">
+  <h2>Contact Policy</h2>
+  <p>
+    GitHub Issues are the primary public contact route for these projects right now. No direct public support email is
+    published yet. If you need to report a bug, request a feature, ask an operational question, or flag a privacy
+    concern, use the tracker that best matches the affected lab.
+  </p>
+</section>
+{% endblock %}

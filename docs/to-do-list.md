@@ -44,3 +44,13 @@ This isn't right, this url should point to what is currently at https://polyfold
    - rps/play should be like aix-labs.uw.r.appspot.com/rps/play
     - aix-labs/rps/play has pretty good fonts and size proportionalities: still needs work, but it's better than most other pages; could serve as a first-pass font-fix and reproprotioning aim-point for the others
   - this is why **drl/inventory** wasn't found
+
+### footer
+Put in a standardized footer on all AIX Labs pages with:
+ - GNU copyright 2026 AIX Protodyne
+ - 'Contact Us' link to a contact-us page 
+ - link to a Privacy page
+ - link to a new, descriptive, detailed AIX TOC page
+Create:
+ - Boilerplate Privacy and Contact pages filled in from available project details
+ - the more detailed TOC page, different from the brief-summary quick-linked AIX splash page, covering all the arms and sub-arms of AIX (not including sister DRL) to be linked to in the footer at bottom of AIX every project page
