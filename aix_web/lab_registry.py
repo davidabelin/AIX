@@ -1,4 +1,18 @@
-"""Lab registry contracts and mount resolution for AIX."""
+"""Lab registry contracts and mount resolution for AIX.
+
+Role
+----
+Define the canonical list of labs the AIX hub knows about, including their
+display metadata, lazy loader entrypoints, and environment-controlled
+enablement.
+
+Cross-Repo Context
+------------------
+This registry is where the umbrella app's understanding of the broader AIX
+system becomes concrete. It references sibling repos such as ``rps`` and
+``c4``, the standalone ``pf`` Polyfolds service, the AIX-local DRL portal, and
+the Euclidorithm app that still lives under the geometry workspace.
+"""
 
 from __future__ import annotations
 
@@ -14,7 +28,11 @@ LabLoader = Callable[[], Any]
 
 @dataclass(slots=True)
 class LabSpec:
-    """One lab registration entry."""
+    """One declarative lab registration entry.
+
+    ``LabSpec`` is the stable metadata contract shared by the AIX hub UI, the
+    WSGI mount builder, and diagnostics pages.
+    """
 
     slug: str
     display_name: str
@@ -26,7 +44,13 @@ class LabSpec:
 
 @dataclass(slots=True)
 class LabMount:
-    """Resolved mount state for one lab."""
+    """Resolved mount state for one lab.
+
+    Role
+    ----
+    Pair one ``LabSpec`` with its runtime mount object or an enable/load error
+    marker after registry resolution.
+    """
 
     spec: LabSpec
     app: Any | None
@@ -34,7 +58,14 @@ class LabMount:
 
 
 def _enabled_labs_from_env(default_slugs: list[str]) -> set[str]:
-    """Resolve enabled lab slugs from ``AIX_ENABLED_LABS`` when provided."""
+    """Resolve enabled lab slugs from ``AIX_ENABLED_LABS`` when provided.
+
+    Notes
+    -----
+    The environment variable acts as a production-safety valve so AIX can hide
+    labs whose standalone services are not deployed or whose bridge runtime is
+    intentionally unavailable.
+    """
 
     raw = str(os.getenv("AIX_ENABLED_LABS", "")).strip()
     if not raw:
@@ -44,7 +75,23 @@ def _enabled_labs_from_env(default_slugs: list[str]) -> set[str]:
 
 
 def build_lab_specs() -> list[LabSpec]:
-    """Return default lab specs for the current AIX build."""
+    """Return default lab specs for the current AIX build.
+
+    Role
+    ----
+    Construct the canonical ordered lab catalog used by the AIX hub.
+
+    Cross-Repo Context
+    ------------------
+    The returned entries deliberately mix multiple integration modes:
+
+    - ``rps`` and ``c4`` are sibling repos with their own Flask apps.
+    - ``drl`` is surfaced through an AIX-native portal rather than an in-process
+      mount of the DRL app itself.
+    - ``euclidorithm`` is imported from the geometry workspace.
+    - ``polyfolds`` is conceptually a standalone sister service even though AIX
+      also retains a local fallback shell for development and diagnostics.
+    """
 
     from aix_web.labs.c4_adapter import load_c4_app
     from aix_web.labs.drl_adapter import load_drl_app
@@ -103,7 +150,17 @@ def build_lab_specs() -> list[LabSpec]:
 
 
 def resolve_lab_mounts(specs: list[LabSpec]) -> list[LabMount]:
-    """Build lazy WSGI mounts for all enabled labs."""
+    """Build lazy WSGI mounts for all enabled labs.
+
+    Role
+    ----
+    Convert declarative ``LabSpec`` entries into runtime mount objects that the
+    AIX dispatcher can attach under ``/<slug>``.
+
+    Depends On
+    ----------
+    ``LazyMountApp`` for deferred import and initialization behavior.
+    """
 
     mounts: list[LabMount] = []
     for spec in specs:

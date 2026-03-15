@@ -1,4 +1,11 @@
-"""AIX-native portal app for the separate DRL sister web application."""
+"""AIX-native portal app for the separate DRL sister web application.
+
+Role
+----
+Expose DRL inside AIX as a sister-app portal rather than an in-process mount.
+This preserves one coherent AIX navigation surface without forcing the DRL app
+to share the AIX runtime or deployment model.
+"""
 
 from __future__ import annotations
 
@@ -15,6 +22,8 @@ AIX_ROOT = Path(__file__).resolve().parents[2]
 
 @dataclass(frozen=True, slots=True)
 class DrlLink:
+    """One curated DRL route surfaced in the AIX sister-app portal."""
+
     label: str
     path: str
     summary: str
@@ -40,6 +49,14 @@ DRL_LINKS: tuple[DrlLink, ...] = (
 
 
 def _normalized_external_url() -> str:
+    """Resolve the externally reachable DRL base URL from environment hints.
+
+    Used By
+    -------
+    The DRL portal context builder, so launch links can point at the deployed
+    sister app when available.
+    """
+
     for key in ("AIX_DRL_APP_URL", "DRL_APP_URL", "DRL_PUBLIC_URL"):
         value = str(os.getenv(key, "")).strip()
         if value:
@@ -48,6 +65,8 @@ def _normalized_external_url() -> str:
 
 
 def _repo_root() -> Path:
+    """Resolve the local DRL repository root for diagnostics only."""
+
     override = str(os.getenv("AIX_DRL_REPO", "")).strip()
     if override:
         return Path(override).expanduser().resolve()
@@ -55,6 +74,14 @@ def _repo_root() -> Path:
 
 
 def _build_context() -> dict:
+    """Build the render context for the AIX DRL portal page.
+
+    Role
+    ----
+    Translate the static curated link catalog into grouped launch rows and
+    diagnostics that the AIX hub can present without importing the DRL app.
+    """
+
     external_url = _normalized_external_url()
     repo_root = _repo_root()
     grouped: dict[str, list[dict]] = {}
@@ -94,7 +121,14 @@ def _build_context() -> dict:
 
 
 def load_drl_app() -> Flask:
-    """Return the AIX-local DRL portal app."""
+    """Return the AIX-local DRL portal app.
+
+    Cross-Repo Context
+    ------------------
+    Unlike ``rps`` and ``c4``, this does not bridge directly into the sibling
+    DRL Flask application. It creates a small AIX-owned Flask app that points
+    outward to the standalone DRL deployment and local repo metadata.
+    """
 
     app = Flask(
         "aix_drl_portal",

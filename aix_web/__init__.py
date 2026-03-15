@@ -1,4 +1,18 @@
-"""AIX app factory and WSGI dispatcher wiring."""
+"""AIX app factory and WSGI dispatcher wiring.
+
+Role
+----
+Define the two top-level assembly steps for the umbrella app:
+
+1. build the hub Flask application that owns AIX-native pages and diagnostics
+2. mount lab sub-apps under their path prefixes through a WSGI dispatcher
+
+Cross-Repo Context
+------------------
+This module is the runtime junction where AIX meets every linked repo:
+``rps``, ``c4``, ``pf``/Polyfolds, ``drl`` (through the AIX portal), and
+Euclidorithm.
+"""
 
 from __future__ import annotations
 
@@ -13,7 +27,18 @@ from aix_web.path_prefix_wrapper import PathPrefixWrapper
 
 
 def create_hub_app(config: dict | None = None) -> Flask:
-    """Create the hub Flask app used as the root AIX shell."""
+    """Create the hub Flask app used as the root AIX shell.
+
+    Role
+    ----
+    Assemble the AIX-owned pages, lab registry state, compatibility redirects,
+    and nav metadata that exist independently of any mounted lab.
+
+    Used By
+    -------
+    ``create_app`` for full umbrella assembly and tests that target the AIX hub
+    without mounting all lab apps.
+    """
 
     app = Flask(
         __name__,
@@ -28,6 +53,15 @@ def create_hub_app(config: dict | None = None) -> Flask:
 
     @app.before_request
     def redirect_polyfolds_service_host():
+        """Redirect bare Polyfolds service-host requests into ``/polyfolds``.
+
+        Notes
+        -----
+        This keeps the standalone ``polyfolds-dot-...`` host landing on the
+        Polyfolds service even though the default AIX service still receives the
+        initial request in some routing paths.
+        """
+
         host = (request.host or "").split(":", 1)[0].lower()
         if host != "polyfolds-dot-aix-labs.uw.r.appspot.com":
             return None
@@ -46,6 +80,8 @@ def create_hub_app(config: dict | None = None) -> Flask:
 
     @app.context_processor
     def inject_hub_nav():
+        """Expose the enabled lab mount list to hub templates."""
+
         nav_mounts = [
             mount
             for mount in app.extensions.get("lab_mounts", [])
@@ -60,7 +96,26 @@ def create_hub_app(config: dict | None = None) -> Flask:
 
 
 def create_app(config: dict | None = None):
-    """Create the full WSGI application with mounted sub-lab apps."""
+    """Create the full WSGI application with mounted sub-lab apps.
+
+    Role
+    ----
+    Combine the AIX hub with mounted lab applications under path prefixes like
+    ``/rps`` and ``/c4``.
+
+    Depends On
+    ----------
+    - ``create_hub_app`` for hub-only Flask routes
+    - ``LabThemeWrapper`` for optional shared chrome injection
+    - ``DispatcherMiddleware`` for WSGI-level path dispatch
+    - the lab registry and adapter modules for mountable lab apps
+
+    Cross-Repo Context
+    ------------------
+    This is the local umbrella assembly point for the independent lab repos.
+    In cloud production, some labs are separate App Engine services, but the
+    same path layout is preserved so AIX still reads as one umbrella product.
+    """
 
     hub_app = create_hub_app(config=config)
     mount_map = {}

@@ -1,4 +1,16 @@
-"""Background job orchestration for bridged Polyfolds CLI commands."""
+"""Background job orchestration for bridged Polyfolds CLI commands.
+
+Role
+----
+Provide the narrow runtime that lets AIX queue and execute offline Polyfolds
+CLI commands against the development workspace under ``pf/polyfolds``.
+
+Cross-Repo Context
+------------------
+This manager does not run the standalone ``pf_web`` service. It targets the
+offline Polyfolds generators and dataset builders so AIX can offer a temporary
+jobs API while the full standalone product takes shape.
+"""
 
 from __future__ import annotations
 
@@ -14,13 +26,24 @@ from aix_web.bridge import AIX_ROOT
 
 
 def utcnow_iso() -> str:
-    """Return timezone-aware UTC timestamp string."""
+    """Return a timezone-aware UTC timestamp string for job metadata."""
 
     return datetime.now(UTC).isoformat()
 
 
 class PolyfoldsJobManager:
-    """Queue and execute Polyfolds CLI jobs."""
+    """Queue and execute Polyfolds CLI jobs.
+
+    Role
+    ----
+    Accept API payloads from the AIX-side Polyfolds shell, normalize them into
+    concrete CLI commands, and track their lifecycle in an in-memory job table.
+
+    Depends On
+    ----------
+    The offline ``pf/polyfolds`` workspace and the solid-specific CLI scripts
+    it exposes.
+    """
 
     SOLID_SCRIPT = {
         "tetra": "solid_tetra.py",
@@ -50,7 +73,13 @@ class PolyfoldsJobManager:
         self._executor = ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="polyfolds-job")
 
     def submit_job(self, payload: dict[str, Any]) -> dict[str, Any]:
-        """Create and queue one Polyfolds job from API payload."""
+        """Create and queue one Polyfolds job from API payload.
+
+        Side Effects
+        ------------
+        Creates a job record, allocates output/log paths, and submits execution
+        to the background thread pool.
+        """
 
         if not self.repo_dir.exists():
             raise ValueError(
@@ -120,6 +149,8 @@ class PolyfoldsJobManager:
         return dict(row) if row else None
 
     def _update_job(self, job_id: int, **updates: Any) -> None:
+        """Apply an in-place mutation to one tracked job record."""
+
         with self._lock:
             row = self._jobs.get(int(job_id))
             if row is None:
@@ -135,6 +166,14 @@ class PolyfoldsJobManager:
         solid: str,
         params: dict[str, Any],
     ) -> tuple[list[str], Path, int]:
+        """Translate one normalized job payload into a concrete CLI command.
+
+        Returns
+        -------
+        tuple[list[str], pathlib.Path, int]
+            The command argv, output directory, and bounded timeout in seconds.
+        """
+
         script = self.SOLID_SCRIPT[solid]
         out_dir = params.get("out_dir")
         if out_dir:
@@ -182,11 +221,15 @@ class PolyfoldsJobManager:
 
     @staticmethod
     def _optional_flag(name: str, value: Any, cast) -> list[str]:
+        """Return one CLI flag pair when a value is present."""
+
         if value is None:
             return []
         return [name, str(cast(value))]
 
     def _run_job(self, job_id: int) -> None:
+        """Execute one queued job and persist terminal status metadata."""
+
         row = self.get_job(job_id)
         if row is None:
             return

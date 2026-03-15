@@ -1,4 +1,12 @@
-"""Polyfolds lab app with phased API bridge endpoints."""
+"""Polyfolds lab app with phased API bridge endpoints.
+
+Role
+----
+Provide the AIX-side Polyfolds shell used for local development, transitional
+API bridging, and diagnostics. In production, ``polyfolds`` is now a standalone
+service routed by App Engine, but AIX still keeps this lightweight shell so the
+umbrella repo can surface Polyfolds job orchestration locally.
+"""
 
 from __future__ import annotations
 
@@ -12,7 +20,15 @@ from aix_web.labs.polyfolds_jobs import PolyfoldsJobManager
 
 
 def load_polyfolds_app() -> Flask:
-    """Return Polyfolds sub-app with phase-1 job API bridge."""
+    """Return the AIX-local Polyfolds shell and phase-1 job bridge.
+
+    Cross-Repo Context
+    ------------------
+    The deployed user-facing app lives in the sibling ``pf`` repo under
+    ``pf_web``. The offline geometry/data-generation workspace lives under
+    ``pf/polyfolds``. This adapter speaks only to the latter by queuing CLI jobs
+    against that development workspace.
+    """
 
     app_root = Path(__file__).resolve().parents[1]
     app = Flask(
@@ -37,10 +53,14 @@ def load_polyfolds_app() -> Flask:
     app.extensions["polyfolds_jobs"] = manager
 
     def _jobs() -> PolyfoldsJobManager:
+        """Return the local Polyfolds job manager extension."""
+
         return current_app.extensions["polyfolds_jobs"]
 
     @app.get("/")
     def polyfolds_home() -> str:
+        """Render the AIX-side Polyfolds landing shell."""
+
         return render_template(
             "pages/polyfolds_home.html",
             title="Polyfolds",
@@ -48,6 +68,8 @@ def load_polyfolds_app() -> Flask:
 
     @app.get("/api/v1/presets")
     def polyfolds_presets():
+        """Return lightweight preset metadata for the phase-1 jobs API."""
+
         return jsonify(
             {
                 "solids": ["tetra", "hexa", "octa", "dodeca", "icosa"],
@@ -68,6 +90,8 @@ def load_polyfolds_app() -> Flask:
 
     @app.post("/api/v1/jobs")
     def polyfolds_create_job():
+        """Validate and enqueue one Polyfolds dataset or nets job."""
+
         payload = request.get_json(silent=True) or {}
         try:
             job = _jobs().submit_job(payload)
@@ -77,6 +101,8 @@ def load_polyfolds_app() -> Flask:
 
     @app.get("/api/v1/jobs")
     def polyfolds_list_jobs():
+        """Return recent Polyfolds job records from the in-memory queue."""
+
         limit_raw = request.args.get("limit", "100")
         try:
             limit = max(1, min(500, int(limit_raw)))
@@ -87,6 +113,8 @@ def load_polyfolds_app() -> Flask:
 
     @app.get("/api/v1/jobs/<int:job_id>")
     def polyfolds_get_job(job_id: int):
+        """Return one Polyfolds job record by id."""
+
         job = _jobs().get_job(job_id)
         if job is None:
             return jsonify({"error": "Job not found."}), 404
@@ -94,6 +122,8 @@ def load_polyfolds_app() -> Flask:
 
     @app.get("/healthz")
     def polyfolds_healthz():
+        """Return lightweight health details for the AIX-side Polyfolds bridge."""
+
         repo_exists = Path(manager.repo_dir).exists()
         return jsonify(
             {

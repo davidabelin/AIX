@@ -1,4 +1,11 @@
-"""Adapter for mounting the external RPS Flask app under ``/rps``."""
+"""Adapter for mounting the external RPS Flask app under ``/rps``.
+
+Role
+----
+Bridge the standalone ``rps`` repo into the local AIX hub by resolving the
+sibling repository, importing its app factory, and translating ``RPS_*``
+environment variables into the config contract expected by ``rps_web``.
+"""
 
 from __future__ import annotations
 
@@ -9,7 +16,14 @@ from aix_web.bridge import add_import_path
 
 
 def _rps_config_from_env() -> dict:
-    """Map ``RPS_*`` environment vars into the RPS app config contract."""
+    """Map ``RPS_*`` environment vars into the RPS app config contract.
+
+    Cross-Repo Context
+    ------------------
+    This keeps AIX deployment and local dev settings aligned with the standalone
+    ``rps`` service without forcing AIX to know the internals of that repo's
+    configuration loader.
+    """
 
     keys = [
         "DATABASE_URL",
@@ -41,7 +55,13 @@ def _rps_config_from_env() -> dict:
 
 
 def load_rps_app():
-    """Load and return the bridged RPS Flask application."""
+    """Load and return the bridged RPS Flask application.
+
+    Role
+    ----
+    Resolve the ``rps`` repo location, import ``rps_web.create_app``, and apply
+    any translated config overrides supplied from the AIX environment.
+    """
 
     add_import_path("AIX_RPS_REPO", "../rps")
     module = import_module("rps_web")

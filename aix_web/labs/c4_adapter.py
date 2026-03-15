@@ -1,4 +1,11 @@
-"""Adapter for mounting the c4 Flask app under ``/c4``."""
+"""Adapter for mounting the c4 Flask app under ``/c4``.
+
+Role
+----
+Bridge the standalone ``c4`` repo into the local AIX hub. The adapter mirrors
+the RPS integration pattern so Connect4 can evolve independently while still
+sharing the AIX umbrella shell locally.
+"""
 
 from __future__ import annotations
 
@@ -9,7 +16,14 @@ from aix_web.bridge import add_import_path
 
 
 def _c4_config_from_env() -> dict:
-    """Map ``C4_*`` environment vars into the c4 app config contract."""
+    """Map ``C4_*`` environment vars into the c4 app config contract.
+
+    Cross-Repo Context
+    ------------------
+    This lets App Engine and local AIX development pass storage, secret, and
+    worker settings into the standalone ``c4`` app without importing any of its
+    internal configuration code into AIX.
+    """
 
     keys = [
         "DATABASE_URL",
@@ -39,7 +53,13 @@ def _c4_config_from_env() -> dict:
 
 
 def load_c4_app():
-    """Load and return the bridged c4 Flask application."""
+    """Load and return the bridged c4 Flask application.
+
+    Role
+    ----
+    Resolve the sibling ``c4`` repo, import ``c4_web.create_app``, and apply
+    translated ``C4_*`` settings when present.
+    """
 
     add_import_path("AIX_C4_REPO", "../c4")
     module = import_module("c4_web")
