@@ -84,7 +84,8 @@ def test_bridge_diagnostics_endpoint_exposes_config_snapshot(client):
     assert set(payload["labs"].keys()) == {"rps", "drl", "c4", "euclidorithm", "polyfolds"}
 
 
-def test_drl_portal_page_renders(client):
+def test_drl_portal_page_renders(monkeypatch):
+    monkeypatch.setenv("AIX_DRL_APP_URL", "https://deeprl-031026.wm.r.appspot.com")
     app = create_app({"TESTING": True})
     mounted_client = Client(app, Response)
     response = mounted_client.get("/drl/")
@@ -92,7 +93,7 @@ def test_drl_portal_page_renders(client):
     html = response.get_data(as_text=True)
     assert "Deep RL Lab" in html
     assert "Table Of Contents" in html
-    assert "AIX_DRL_APP_URL" in html
+    assert "https://deeprl-031026.wm.r.appspot.com" in html
 
 
 @pytest.mark.parametrize(
@@ -105,7 +106,8 @@ def test_aix_pages_include_footer_links(path: str):
     response = client.get(path)
     assert response.status_code == 200
     html = response.get_data(as_text=True)
-    assert "GNU copyright 2026 AIX Protodyne" in html
+    assert "copyleft.svg" in html
+    assert "2026 AIX Protodyne" in html
     assert "Contact Us" in html
     assert "Privacy" in html
     assert "AIX TOC" in html

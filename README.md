@@ -8,6 +8,7 @@ in their own repositories and are mounted by interface.
 ## Bridge strategy
 
 - `rps` remains independent and is mounted under `/rps`.
+- `drl` remains independent as a sister app; AIX links to it through `/drl/`.
 - `c4` remains independent and is mounted under `/c4`.
 - `euclidorithm` remains independent and is mounted under `/euclidorithm`.
 - `polyfolds` lives in the sibling `pf` repo and is routed under `/polyfolds`.

@@ -402,8 +402,9 @@
         <p class="eyebrow">Separate Runtime + AIX Directory</p>
         <h1>Deep RL Lab</h1>
         <p>
-          DRL stays a separate web application. AIX gives it a stable entry page, a readable table of contents,
-          and one place to explain where the live app belongs in the broader lab ecosystem.
+          DRL stays a separate sister project with its own standalone runtime. AIX gives it a stable entry page,
+          a readable table of contents, and one place to explain how the independent DRL site fits into the larger
+          lab ecosystem.
         </p>
         {% if external_url %}
         <div class="hero-meta"><span><strong>Live sister app:</strong> <a href="{{ external_url }}">{{ external_url }}</a></span></div>
@@ -484,7 +485,10 @@
     </main>
     <footer class="site-footer">
       <div class="footer-inner">
-        <p class="footer-copy">GNU copyright 2026 AIX Protodyne</p>
+        <p class="footer-copy aix-footer-copy">
+          <img class="copyleft-mark" src="{{ url_for('static', filename='icons/copyleft.svg') }}" alt="" aria-hidden="true">
+          <span>2026 AIX Protodyne</span>
+        </p>
         <nav class="footer-links" aria-label="AIX footer">
           <a href="/contact">Contact Us</a>
           <a href="/privacy">Privacy</a>

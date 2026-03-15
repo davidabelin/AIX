@@ -70,6 +70,10 @@ LAB_PALETTES = {
 
 
 _BODY_CLOSE_RE = re.compile(r"</body\s*>", re.IGNORECASE)
+_BACK_LABEL_RE = re.compile(r">Back to AIX Hub<")
+_FOOTER_COPY_RE = re.compile(
+    r'<p class="footer-copy">GNU copyright 2026 AIX Protodyne</p>'
+)
 
 
 def _build_injection(slug: str) -> str:
@@ -159,12 +163,37 @@ def _build_injection(slug: str) -> str:
   #aix-subpage-back:hover {{
     filter: brightness(1.04);
   }}
+  .aix-footer-copy {{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }}
+  .aix-footer-copy .copyleft-mark {{
+    width: 0.95rem;
+    height: 0.95rem;
+    flex: 0 0 auto;
+  }}
 </style>
-<a id="aix-subpage-back" href="/">Back to AIX Hub</a>
+<a id="aix-subpage-back" href="/">AIX Labs</a>
 """.strip()
 
 
+def _normalize_aix_chrome(html_text: str) -> str:
+    """Rewrite shared AIX chrome labels/footers across mounted lab HTML."""
+
+    html_text = _BACK_LABEL_RE.sub(">AIX Labs<", html_text)
+    footer_markup = (
+        '<p class="footer-copy aix-footer-copy">'
+        '<img class="copyleft-mark" src="/static/icons/copyleft.svg" alt="" aria-hidden="true">'
+        "<span>2026 AIX Protodyne</span>"
+        "</p>"
+    )
+    html_text = _FOOTER_COPY_RE.sub(footer_markup, html_text)
+    return html_text
+
+
 def _inject_html(html_text: str, slug: str) -> str:
+    html_text = _normalize_aix_chrome(html_text)
     if 'id="aix-subpage-back"' in html_text:
         return html_text
     snippet = _build_injection(slug)

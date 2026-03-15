@@ -30,6 +30,9 @@ aix_web\labs\__init__.py
 aix_web\static\css\hub_theme.css
 aix_web\static\js\polyfolds.js
 aix_web\templates\base_hub.html
+aix_web\templates\pages\contact.html
 aix_web\templates\pages\drl_portal.html
 aix_web\templates\pages\hub.html
 aix_web\templates\pages\polyfolds_home.html
+aix_web\templates\pages\privacy.html
+aix_web\templates\pages\toc.html
