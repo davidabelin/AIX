@@ -5,6 +5,7 @@ from __future__ import annotations
 from flask import Blueprint, redirect, request
 
 routes_compat_bp = Blueprint("routes_compat", __name__)
+_MUTATING_SAFE_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 
 
 def _redirect_with_query(target: str, *, code: int = 307):
@@ -48,3 +49,18 @@ def api_v1_redirect(subpath: str):
     """Bridge ``/api/v1/*`` calls to mounted RPS API paths."""
 
     return _redirect_with_query(f"/rps/api/v1/{subpath}", code=307)
+
+
+@routes_compat_bp.route("/euclidorithm", methods=_MUTATING_SAFE_METHODS)
+@routes_compat_bp.route("/euclidorithm/", methods=_MUTATING_SAFE_METHODS)
+def euclidorithm_root_redirect():
+    """Bridge legacy Euclidorithm mount paths to the Euclidyne mount."""
+
+    return _redirect_with_query("/euclidyne/", code=307)
+
+
+@routes_compat_bp.route("/euclidorithm/<path:subpath>", methods=_MUTATING_SAFE_METHODS)
+def euclidorithm_redirect(subpath: str):
+    """Bridge ``/euclidorithm/*`` calls to the Euclidyne mount."""
+
+    return _redirect_with_query(f"/euclidyne/{subpath}", code=307)

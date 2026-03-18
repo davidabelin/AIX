@@ -6,7 +6,7 @@ if errorlevel 1 goto :fail
 set "AIX_ROOT=%CD%"
 set "RPS_ROOT=%AIX_ROOT%\..\rps"
 set "C4_ROOT=%AIX_ROOT%\..\c4"
-set "EUCLID_ROOT=%AIX_ROOT%\..\geometry\euclidorithm"
+set "EUCLIDYNE_ROOT=%AIX_ROOT%\..\geometry\euclidyne"
 set "PF_ROOT=%AIX_ROOT%\..\pf"
 
 echo.
@@ -48,15 +48,15 @@ if exist "%C4_ROOT%\app.aix.yaml" (
 )
 
 echo.
-echo [4/8] Deploying Euclidorithm service if present...
-if exist "%EUCLID_ROOT%\app.aix.yaml" (
-  pushd "%EUCLID_ROOT%" >nul
+echo [4/8] Deploying Euclidyne service if present...
+if exist "%EUCLIDYNE_ROOT%\app.aix.yaml" (
+  pushd "%EUCLIDYNE_ROOT%" >nul
   echo ^> gcloud app deploy app.aix.yaml --project="%PROJECT_ID%" --quiet
   call gcloud app deploy app.aix.yaml --project="%PROJECT_ID%" --quiet
   if errorlevel 1 goto :fail_popd_all
   popd >nul
 ) else (
-  echo [SKIP] %EUCLID_ROOT%\app.aix.yaml not found
+  echo [SKIP] %EUCLIDYNE_ROOT%\app.aix.yaml not found
 )
 
 echo.

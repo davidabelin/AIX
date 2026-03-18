@@ -10,10 +10,11 @@ bridge layer for import-path discovery.
 
 Cross-Repo Context
 ------------------
-The same helper is used by AIX adapters for ``rps``, ``c4``, and
-``euclidorithm``. ``pf`` no longer uses an import bridge in production, but the
-local AIX-side Polyfolds adapter still relies on the same repository-root
-conventions.
+The same helper is used by AIX adapters for ``rps`` and ``c4``. Euclidyne now
+ships as a package rooted at ``../geometry/euclidyne``, so its adapter uses the
+same conventions but manages the import root slightly differently. ``pf`` no
+longer uses an import bridge in production, but the local AIX-side Polyfolds
+adapter still relies on the same repository-root conventions.
 """
 
 from __future__ import annotations
@@ -54,8 +55,7 @@ def add_import_path(env_var: str, default_relative_path: str) -> Path | None:
 
     Used By
     -------
-    ``aix_web.labs.rps_adapter``, ``aix_web.labs.c4_adapter``, and
-    ``aix_web.labs.euclidorithm_adapter``.
+    ``aix_web.labs.rps_adapter`` and ``aix_web.labs.c4_adapter``.
 
     Notes
     -----

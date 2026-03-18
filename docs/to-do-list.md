@@ -1,16 +1,38 @@
 # AIX Running List of Assorted Changes
 
-## AIX
-- footer is supposed to be the "copyleft" symbol (= "GNU copyright") which is unicode U+1F12F or  C:\Users\David\Pictures\icons\Copyleft.svg
+Status refresh: 2026-03-17
 
-- Get volume of recorded gameplay data from unmaintained defunct rps server @  https://directed-sonar-429119-u2.uw.r.appspot.com/training
-  - delete or reuse directed-sonar-429119-u2 project if not going to be for rps anymore
+## AIX
+- [x] Footer is supposed to use the copyleft symbol (`U+1F12F`) or `Copyleft.svg`.
+  - AIX hub/templates now use `aix_web/static/icons/copyleft.svg`.
+  - Euclidyne standalone chrome now uses the copyleft symbol directly.
+
+- [x] Get volume of recorded gameplay data from the unmaintained RPS server at `https://directed-sonar-429119-u2.uw.r.appspot.com/training`.
+  - Captured from `https://directed-sonar-429119-u2.uw.r.appspot.com/api/v1/training/readiness?lookback=5`
+  - Recorded volume: `55` sessions, `1,823` round rows, `1,552` training samples at `lookback=5`
+- [ ] Delete or reuse `directed-sonar-429119-u2` if it is not going to stay assigned to RPS.
+  - Blocked tonight: the active `gcloud` account in this session does not have IAM access on that project, so I could not inspect or retire it safely.
 
 ## DRL 
-### https://drl-web-x2ulcmhaiq-wm.a.run.app/
-- OMG how did I end up with such an ugly url?! **We have to change this somehow, even if it takes reconstructing the whole thing.** OMG, no! Argggghhhh ... *terrible!*, must change asap. :(
-  - how many other things have been changed without my approval? How do I get reliable manageable timely updates and presented with more decisions about things like this? (rhetorical, don't try to answer)
-  - let's lose all the random numbers and spurious text
-  - keep it both *semantic **and** unique* by:
-    - use of alternative abbreviations/acronyms semantically related to the project theme and function. 
-- change "Back to AIX Hub" button to "AIX Labs" and actually link it to AIX now (button was wrongly linked to drl-web-x2ulcmhaiq-wm.a.run.app )
+### Legacy URL: `https://drl-web-x2ulcmhaiq-wm.a.run.app/`
+- [x] Replace the ugly generated DRL URL as the canonical entry point.
+  - Current canonical DRL URL is `https://deeprl-031026.wm.r.appspot.com/`
+  - AIX already points to the canonical App Engine URL, and that canonical URL serves the updated chrome
+- [x] Change `Back to AIX Hub` to `AIX Labs` and point it to AIX.
+  - Verified on the canonical App Engine DRL URL and in the local DRL repo
+- [ ] Retire or redirect the legacy Cloud Run URL if it is no longer intended to be public.
+  - It still responds, so this is now a deployment/cloud cleanup item rather than an AIX-code item.
+
+## Euclidyne / AIX follow-up
+- [x] Update AIX umbrella wiring from `euclidorithm` to the canonical `euclidyne` service and `/euclidyne` path prefix.
+- [x] Update the AIX-side files implicated by that rename:
+  - `dispatch.yaml`
+  - `app.yaml`
+  - `aix_cloud_deploy.bat`
+  - `aix_web/blueprints/hub.py`
+  - `aix_web/labs/euclidorithm_adapter.py` replaced by a canonical `euclidyne` adapter plus compatibility shim
+  - AIX tests/docs updated to expect `euclidyne`
+- [x] Decide whether old `/euclidorithm/*` URLs should keep working temporarily.
+  - Decision: yes
+  - Implemented as explicit compatibility redirects from `/euclidorithm/*` to `/euclidyne/*`
+  - `dispatch.yaml` now sends legacy `/euclidorithm/*` traffic to the AIX hub so the redirect can happen before public routing fully flips over

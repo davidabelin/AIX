@@ -11,7 +11,7 @@ Cross-Repo Context
 ------------------
 This module is the runtime junction where AIX meets every linked repo:
 ``rps``, ``c4``, ``pf``/Polyfolds, ``drl`` (through the AIX portal), and
-Euclidorithm.
+Euclidyne.
 """
 
 from __future__ import annotations

@@ -42,6 +42,18 @@ LAB_PALETTES = {
         "bg": "#faf5ef",
         "bg_alt": "#eef6f5",
     },
+    "euclidyne": {
+        "accent": "#0a4f8b",
+        "accent_2": "#b66d2f",
+        "paper": "#f4f7fb",
+        "panel": "#ffffff",
+        "line": "#cad5e3",
+        "muted": "#4e5a67",
+        "brand": "#0a4f8b",
+        "brand_soft": "#dbe9f8",
+        "bg": "#f4f7fb",
+        "bg_alt": "#eef3fa",
+    },
     "euclidorithm": {
         "accent": "#0a4f8b",
         "accent_2": "#b66d2f",
@@ -72,7 +84,8 @@ LAB_PALETTES = {
 _BODY_CLOSE_RE = re.compile(r"</body\s*>", re.IGNORECASE)
 _BACK_LABEL_RE = re.compile(r">Back to AIX Hub<")
 _FOOTER_COPY_RE = re.compile(
-    r'<p class="footer-copy">GNU copyright 2026 AIX Protodyne</p>'
+    r'<p class="footer-copy[^"]*">.*?2026 AIX Protodyne.*?</p>',
+    re.IGNORECASE | re.DOTALL,
 )
 
 

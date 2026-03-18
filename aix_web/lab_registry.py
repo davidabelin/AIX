@@ -11,7 +11,7 @@ Cross-Repo Context
 This registry is where the umbrella app's understanding of the broader AIX
 system becomes concrete. It references sibling repos such as ``rps`` and
 ``c4``, the standalone ``pf`` Polyfolds service, the AIX-local DRL portal, and
-the Euclidorithm app that still lives under the geometry workspace.
+the Euclidyne app that lives under the geometry workspace.
 """
 
 from __future__ import annotations
@@ -24,6 +24,9 @@ from aix_web.lazy_mount import LazyMountApp
 
 
 LabLoader = Callable[[], Any]
+SLUG_ALIASES = {
+    "euclidorithm": "euclidyne",
+}
 
 
 @dataclass(slots=True)
@@ -70,7 +73,11 @@ def _enabled_labs_from_env(default_slugs: list[str]) -> set[str]:
     raw = str(os.getenv("AIX_ENABLED_LABS", "")).strip()
     if not raw:
         return set(default_slugs)
-    enabled = {token.strip().lower() for token in raw.split(",") if token.strip()}
+    enabled = {
+        SLUG_ALIASES.get(token.strip().lower(), token.strip().lower())
+        for token in raw.split(",")
+        if token.strip()
+    }
     return enabled or set(default_slugs)
 
 
@@ -88,18 +95,18 @@ def build_lab_specs() -> list[LabSpec]:
     - ``rps`` and ``c4`` are sibling repos with their own Flask apps.
     - ``drl`` is surfaced through an AIX-native portal rather than an in-process
       mount of the DRL app itself.
-    - ``euclidorithm`` is imported from the geometry workspace.
+    - ``euclidyne`` is imported from the geometry workspace.
     - ``polyfolds`` is conceptually a standalone sister service even though AIX
       also retains a local fallback shell for development and diagnostics.
     """
 
     from aix_web.labs.c4_adapter import load_c4_app
     from aix_web.labs.drl_adapter import load_drl_app
-    from aix_web.labs.euclidorithm_adapter import load_euclidorithm_app
+    from aix_web.labs.euclidyne_adapter import load_euclidyne_app
     from aix_web.labs.polyfolds_adapter import load_polyfolds_app
     from aix_web.labs.rps_adapter import load_rps_app
 
-    default_order = ["rps", "drl", "c4", "euclidorithm", "polyfolds"]
+    default_order = ["rps", "drl", "c4", "euclidyne", "polyfolds"]
     enabled_slugs = _enabled_labs_from_env(default_order)
 
     return sorted(
@@ -129,12 +136,12 @@ def build_lab_specs() -> list[LabSpec]:
                 enabled=("c4" in enabled_slugs),
             ),
             LabSpec(
-                slug="euclidorithm",
-                display_name="Euclidorithm",
+                slug="euclidyne",
+                display_name="Euclidyne",
                 nav_order=20,
-                summary="Extended Euclidean algorithm visual and interactive lab.",
-                loader=load_euclidorithm_app,
-                enabled=("euclidorithm" in enabled_slugs),
+                summary="Instrument-lab explorations into Euclid, ratios, and rhythm.",
+                loader=load_euclidyne_app,
+                enabled=("euclidyne" in enabled_slugs),
             ),
             LabSpec(
                 slug="polyfolds",

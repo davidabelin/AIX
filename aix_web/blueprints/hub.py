@@ -81,8 +81,9 @@ def _bridge_config_snapshot() -> dict:
             "app_url_set": _present_env("AIX_DRL_APP_URL") or _present_env("DRL_APP_URL") or _present_env("DRL_PUBLIC_URL"),
             "repo_override_set": _present_env("AIX_DRL_REPO"),
         },
-        "euclidorithm": {
-            "repo_override_set": _present_env("AIX_EUCLIDORITHM_REPO"),
+        "euclidyne": {
+            "repo_override_set": _present_env("AIX_EUCLIDYNE_REPO") or _present_env("AIX_EUCLIDORITHM_REPO"),
+            "legacy_repo_override_set": _present_env("AIX_EUCLIDORITHM_REPO"),
         },
         "polyfolds": {
             "repo_override_set": _present_env("AIX_POLYFOLDS_REPO"),
@@ -130,16 +131,15 @@ def _toc_sections() -> list[dict]:
             ],
         },
         {
-            "title": specs.get("euclidorithm").display_name if specs.get("euclidorithm") else "Euclidorithm",
-            "summary": specs.get("euclidorithm").summary if specs.get("euclidorithm") else "Interactive Euclidean algorithm visualizations and models.",
+            "title": specs.get("euclidyne").display_name if specs.get("euclidyne") else "Euclidyne",
+            "summary": specs.get("euclidyne").summary if specs.get("euclidyne") else "Instrument-lab explorations into Euclid, ratios, and rhythm.",
             "routes": [
-                {"path": "/euclidorithm/", "label": "Launch", "summary": "Main Euclidorithm landing page and lab entry."},
-                {"path": "/euclidorithm/table", "label": "Extended Table", "summary": "Extended Euclidean table view with Bezout coefficient progression."},
-                {"path": "/euclidorithm/extended", "label": "Extended Alias", "summary": "Alias route into the extended Euclidean table workflow."},
-                {"path": "/euclidorithm/wp", "label": "Word Problem Alias", "summary": "Alternate entry path that redirects into the table workflow."},
-                {"path": "/euclidorithm/quick", "label": "Quick Check", "summary": "Compact walkthrough of the Euclidean reduction sequence."},
-                {"path": "/euclidorithm/gear", "label": "Gear Model", "summary": "Mechanical/visual gear interpretation of Euclidean steps."},
-                {"path": "/euclidorithm/lock", "label": "Lock Model", "summary": "Lock-and-key style visualization of Euclidean structure."},
+                {"path": "/euclidyne/", "label": "Home", "summary": "Landing page for the Euclidyne atlas and instrument-lab collection."},
+                {"path": "/euclidyne/atlas", "label": "Atlas", "summary": "Overview of Euclidyne lab groups, claims, and related explorations."},
+                {"path": "/euclidyne/quick", "label": "Quick Calculator", "summary": "Fast Euclid, Bezout, and modular-inverse spot checks."},
+                {"path": "/euclidyne/explorer", "label": "Algorithm Explorer", "summary": "Interactive Euclid and Extended Euclid tables with synced explanations."},
+                {"path": "/euclidyne/references", "label": "References", "summary": "Claim register, sources, and evidence shelf for the current lab set."},
+                {"path": "/euclidyne/api/v2/euclid", "label": "Euclid API v2", "summary": "JSON endpoint backing the core Euclid exploration views."},
             ],
         },
         {

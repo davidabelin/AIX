@@ -7,8 +7,10 @@ dispatch:
     service: rps
   - url: "*/c4/*"
     service: c4
+  - url: "*/euclidyne/*"
+    service: euclidyne
   - url: "*/euclidorithm/*"
-    service: euclidorithm
+    service: default
   - url: "*/polyfolds/*"
     service: polyfolds
   - url: "*/*"

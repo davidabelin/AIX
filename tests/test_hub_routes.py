@@ -26,7 +26,7 @@ def test_hub_home_renders(client):
     assert "/rps/" in html
     assert "/drl/" in html
     assert "/c4/" in html
-    assert "/euclidorithm/" in html
+    assert "/euclidyne/" in html
     assert "/polyfolds/" in html
 
 
@@ -35,9 +35,9 @@ def test_healthz_reports_configured_and_pending_labs(client):
     assert response.status_code == 200
     payload = response.get_json()
     assert payload["status"] == "ok"
-    assert set(payload["configured_labs"]) == {"rps", "drl", "c4", "euclidorithm", "polyfolds"}
+    assert set(payload["configured_labs"]) == {"rps", "drl", "c4", "euclidyne", "polyfolds"}
     assert set(payload["mounted_labs"]) == set()
-    assert set(payload["pending_labs"]) == {"rps", "drl", "c4", "euclidorithm", "polyfolds"}
+    assert set(payload["pending_labs"]) == {"rps", "drl", "c4", "euclidyne", "polyfolds"}
     assert payload["failed_labs"] == {}
 
 
@@ -75,13 +75,27 @@ def test_api_post_redirect_preserves_method(client):
     assert response.headers["Location"].endswith("/rps/api/v1/games")
 
 
+@pytest.mark.parametrize(
+    ("path", "target"),
+    [
+        ("/euclidorithm", "/euclidyne/"),
+        ("/euclidorithm/", "/euclidyne/"),
+        ("/euclidorithm/gear?driver_teeth=24&follower_teeth=40", "/euclidyne/gear?driver_teeth=24&follower_teeth=40"),
+    ],
+)
+def test_legacy_euclidorithm_routes_redirect_to_euclidyne(client, path: str, target: str):
+    response = client.get(path, follow_redirects=False)
+    assert response.status_code == 307
+    assert response.headers["Location"].endswith(target)
+
+
 def test_bridge_diagnostics_endpoint_exposes_config_snapshot(client):
     response = client.get("/diagnostics/bridges")
     assert response.status_code == 200
     payload = response.get_json()
     assert payload["status"] == "ok"
     assert "bridge_config" in payload
-    assert set(payload["labs"].keys()) == {"rps", "drl", "c4", "euclidorithm", "polyfolds"}
+    assert set(payload["labs"].keys()) == {"rps", "drl", "c4", "euclidyne", "polyfolds"}
 
 
 def test_drl_portal_page_renders(monkeypatch):
@@ -123,7 +137,7 @@ def test_toc_page_excludes_drl_but_lists_current_aix_arms():
     assert "Sister DRL is intentionally excluded here." in html
     assert "/rps/play" in html
     assert "/c4/play" in html
-    assert "/euclidorithm/gear" in html
+    assert "/euclidyne/explorer" in html
     assert "/polyfolds/" in html
 
 

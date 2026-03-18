@@ -20,12 +20,13 @@ Date: 2026-02-28
 4. Lab registry + mount resolution with per-lab error capture.
 5. Bridge adapters:
    - `rps` adapter imports `rps_web.create_app()`.
-   - `euclidorithm` adapter imports external Flask app.
+   - `euclidyne` adapter imports the external Flask app.
    - `polyfolds` adapter serves a phase-1 job UI + API shell.
 6. WSGI dispatcher mounts labs at:
    - `/rps`
-   - `/euclidorithm`
+   - `/euclidyne`
    - `/polyfolds`
+7. Legacy `/euclidorithm/*` requests can redirect into `/euclidyne/*` while older links are retired.
 
 ## Next implementation phase
 

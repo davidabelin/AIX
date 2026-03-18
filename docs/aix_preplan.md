@@ -1,5 +1,9 @@
 # AIX Multi-Lab Expansion Plan (RPS + Euclidorithm + Polyfolds)
 
+Historical note: this plan predates the rename from Euclidorithm to Euclidyne.
+Current operational AIX wiring uses the `euclidyne` service and `/euclidyne/*`
+paths, while `/euclidorithm/*` is now a compatibility alias.
+
 ## Summary
 This plan creates a new umbrella Flask app named `aix` that hosts multiple AI labs under path prefixes (`/rps/*`, `/euclidorithm/*`, `/polyfolds/*`) while preserving and reusing your current RPS implementation with minimal disruption.  
 Route compatibility is preserved by redirecting old RPS root routes (`/play`, `/training`, `/rl`) to `/rps/*`.
