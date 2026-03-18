@@ -1,9 +1,9 @@
 .gitattributes
-aixenv.bat
 aix_cloud_deploy.bat
 aix_cloud_env.bat
-aix_cloud_setup.bat
+aix_cloud_initial_setup.bat
 aix_cloud_status.bat
+aix_local_env.bat
 app.yaml
 dispatch.yaml
 LICENSE
@@ -23,11 +23,13 @@ aix_web\blueprints\__init__.py
 aix_web\labs\c4_adapter.py
 aix_web\labs\drl_adapter.py
 aix_web\labs\euclidorithm_adapter.py
+aix_web\labs\euclidyne_adapter.py
 aix_web\labs\polyfolds_adapter.py
 aix_web\labs\polyfolds_jobs.py
 aix_web\labs\rps_adapter.py
 aix_web\labs\__init__.py
 aix_web\static\css\hub_theme.css
+aix_web\static\icons\copyleft.svg
 aix_web\static\js\polyfolds.js
 aix_web\templates\base_hub.html
 aix_web\templates\pages\contact.html
