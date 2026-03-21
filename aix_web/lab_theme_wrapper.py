@@ -182,8 +182,10 @@ def _build_injection(slug: str) -> str:
     gap: 0.45rem;
   }}
   .aix-footer-copy .copyleft-mark {{
-    width: 0.95rem;
-    height: 0.95rem;
+    width: 16px;
+    height: 16px;
+    max-width: 16px;
+    max-height: 16px;
     flex: 0 0 auto;
   }}
 </style>
@@ -197,7 +199,7 @@ def _normalize_aix_chrome(html_text: str) -> str:
     html_text = _BACK_LABEL_RE.sub(">AIX Labs<", html_text)
     footer_markup = (
         '<p class="footer-copy aix-footer-copy">'
-        '<img class="copyleft-mark" src="/static/icons/copyleft.svg" alt="" aria-hidden="true">'
+        '<img class="copyleft-mark" src="/static/icons/copyleft.svg" alt="" aria-hidden="true" width="16" height="16">'
         "<span>2026 AIX Protodyne</span>"
         "</p>"
     )

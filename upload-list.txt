@@ -29,6 +29,7 @@ aix_web\labs\polyfolds_jobs.py
 aix_web\labs\rps_adapter.py
 aix_web\labs\__init__.py
 aix_web\static\css\hub_theme.css
+aix_web\static\icons\copyleft.ico
 aix_web\static\icons\copyleft.svg
 aix_web\static\js\polyfolds.js
 aix_web\templates\base_hub.html
