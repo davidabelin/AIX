@@ -36,3 +36,20 @@ Status refresh: 2026-03-17
   - Decision: yes
   - Implemented as explicit compatibility redirects from `/euclidorithm/*` to `/euclidyne/*`
   - `dispatch.yaml` now sends legacy `/euclidorithm/*` traffic to the AIX hub so the redirect can happen before public routing fully flips over
+
+## Connect4
+- will a CNN classifier solve C4?
+ - Give it a pixel array for the board, classify into "best next move" according to best look-ahead ML agent play
+
+## Expansion
+
+### NN's to cover under AIX 
+- [] Get at least one working interactive lab going for EVERY NN design covered in the source material
+
+### Clue 
+- [] see docs\clue_design.md
+- [] develop comprehensive Plan: docs\PlanForClue.md
+
+### Double-digits
+- [] see docs\doubledigits_design.md
+- [] develop comprehensive Plan: docs\PlanForDD.md
