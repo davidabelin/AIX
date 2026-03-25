@@ -48,6 +48,11 @@ def _runtime_warnings() -> list[str]:
             "C4 persistence is not configured (set C4_DATABASE_URL or C4_DATABASE_URL_SECRET). "
             "Cloud instance restarts can lose local SQLite data."
         )
+    if not _present_env("CLUE_DATABASE_URL"):
+        warnings.append(
+            "Clue persistence is not configured (set CLUE_DATABASE_URL). "
+            "Cloud instance restarts can lose local SQLite data."
+        )
     return warnings
 
 
@@ -76,6 +81,13 @@ def _bridge_config_snapshot() -> dict:
             "events_dir_set": _present_env("C4_EVENTS_DIR"),
             "models_dir_set": _present_env("C4_MODELS_DIR"),
             "exports_dir_set": _present_env("C4_EXPORTS_DIR"),
+        },
+        "clue": {
+            "repo_override_set": _present_env("AIX_CLUE_REPO"),
+            "database_url_set": _present_env("CLUE_DATABASE_URL"),
+            "db_path_set": _present_env("CLUE_DB_PATH"),
+            "secret_key_set": _present_env("CLUE_SECRET_KEY"),
+            "internal_worker_token_set": _present_env("CLUE_INTERNAL_WORKER_TOKEN"),
         },
         "drl": {
             "app_url_set": _present_env("AIX_DRL_APP_URL") or _present_env("DRL_APP_URL") or _present_env("DRL_PUBLIC_URL"),
@@ -128,6 +140,19 @@ def _toc_sections() -> list[dict]:
                 {"path": "/c4/arena", "label": "Arena", "summary": "Agent-vs-agent replay with recorded column-estimate overlays."},
                 {"path": "/c4/training", "label": "Training", "summary": "Curated supervised training over recorded Connect4 sessions."},
                 {"path": "/c4/rl", "label": "RL", "summary": "Tabular Q-learning controls and job monitoring for Connect4."},
+            ],
+        },
+        {
+            "title": specs.get("clue").display_name if specs.get("clue") else "Clue",
+            "summary": (
+                specs.get("clue").summary
+                if specs.get("clue")
+                else "Classic Clue board play with private seat state and round-table discussion."
+            ),
+            "routes": [
+                {"path": "/clue/", "label": "Clue Home", "summary": "Launch page for the standalone Clue lab."},
+                {"path": "/clue/game", "label": "Game Table", "summary": "Seat-specific board, hand, notebook, and table-talk surface."},
+                {"path": "/clue/api/v1/games", "label": "Create Game API", "summary": "JSON endpoint for hosted Clue table creation."},
             ],
         },
         {

@@ -45,13 +45,18 @@ Status refresh: 2026-03-17
 
 ### NN's to cover under AIX 
 - [] Get at least one working interactive lab going for EVERY NN design covered in the source material
+  - [] list of viable possibilities
 
 ### Clue 
-- [] see docs\clue_design.md
-- [] see docs\ClueDeepDive.md
+- [] see docs\clue_design.md for vague general notion
+- [] see docs\ClueDeepDive.md for *the whole story*
 - [] develop comprehensive Plan: docs\ClueImplementationPlan.md
+- My preferences include:
+  - always prefer the most meaningful naming of buckets, and anything else, with as little extraneous noise in names as possible -- should be limited to at most a time stamp, or if necessary to keep names meaningful add only simple numbers like 0000.
+  - make a dynamically displayed UI for human gameplay one of the initial priorities
 
 ### Double-digits
-- [] see docs\doubledigits_design.md
-- [] see repo 
-- [] develop comprehensive Plan: docs\DoubleDigitsImplementationPlan.md
+- [] the priority is **Clue** for now but expect this soon, too:
+  - [] see docs\doubledigits_design.md
+  - [] see double-digits repo (locally at C:\Users\David\Documents\Repositories\double-digits)
+  - [] develop comprehensive Plan: docs\DoubleDigitsImplementationPlan.md

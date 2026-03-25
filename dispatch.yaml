@@ -7,6 +7,8 @@ dispatch:
     service: rps
   - url: "*/c4/*"
     service: c4
+  - url: "*/clue/*"
+    service: clue
   - url: "*/euclidyne/*"
     service: euclidyne
   - url: "*/euclidorithm/*"

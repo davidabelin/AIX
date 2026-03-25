@@ -10,6 +10,7 @@ in their own repositories and are mounted by interface.
 - `rps` remains independent and is mounted under `/rps`.
 - `drl` remains independent as a sister app; AIX links to it through `/drl/`.
 - `c4` remains independent and is mounted under `/c4`.
+- `clue` remains independent and is mounted under `/clue`.
 - `euclidyne` remains independent and is mounted under `/euclidyne`.
 - `polyfolds` lives in the sibling `pf` repo and is routed under `/polyfolds`.
 - Large generated datasets are not tracked in this repo by default.
@@ -44,6 +45,7 @@ python -m pip install polyhedra --no-build-isolation
 ```powershell
 $env:AIX_RPS_REPO = "C:\\path\\to\\rps"
 $env:AIX_C4_REPO = "C:\\path\\to\\c4"
+$env:AIX_CLUE_REPO = "C:\\path\\to\\clue"
 $env:AIX_EUCLIDYNE_REPO = "C:\\path\\to\\geometry\\euclidyne"
 $env:AIX_POLYFOLDS_REPO = "C:\\path\\to\\pf\\polyfolds"
 $env:AIX_POLYFOLDS_JOBS_ROOT = "C:\\path\\to\\aix\\data\\polyfolds_jobs"
@@ -68,7 +70,8 @@ Legacy `/euclidorithm/*` links are redirected to `/euclidyne/*` during the trans
 Cloud persistence note:
 
 - On App Engine, configure `RPS_DATABASE_URL` (or `RPS_DATABASE_URL_SECRET`) and
-  `C4_DATABASE_URL` (or `C4_DATABASE_URL_SECRET`) to avoid ephemeral SQLite data loss on instance recycle.
+  `C4_DATABASE_URL` (or `C4_DATABASE_URL_SECRET`) and `CLUE_DATABASE_URL` to avoid
+  ephemeral SQLite data loss on instance recycle.
 
 ## Polyfolds Phase-1 API
 

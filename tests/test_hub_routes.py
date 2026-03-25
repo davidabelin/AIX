@@ -26,6 +26,7 @@ def test_hub_home_renders(client):
     assert "/rps/" in html
     assert "/drl/" in html
     assert "/c4/" in html
+    assert "/clue/" in html
     assert "/euclidyne/" in html
     assert "/polyfolds/" in html
 
@@ -35,9 +36,9 @@ def test_healthz_reports_configured_and_pending_labs(client):
     assert response.status_code == 200
     payload = response.get_json()
     assert payload["status"] == "ok"
-    assert set(payload["configured_labs"]) == {"rps", "drl", "c4", "euclidyne", "polyfolds"}
+    assert set(payload["configured_labs"]) == {"rps", "drl", "c4", "clue", "euclidyne", "polyfolds"}
     assert set(payload["mounted_labs"]) == set()
-    assert set(payload["pending_labs"]) == {"rps", "drl", "c4", "euclidyne", "polyfolds"}
+    assert set(payload["pending_labs"]) == {"rps", "drl", "c4", "clue", "euclidyne", "polyfolds"}
     assert payload["failed_labs"] == {}
 
 
@@ -95,7 +96,7 @@ def test_bridge_diagnostics_endpoint_exposes_config_snapshot(client):
     payload = response.get_json()
     assert payload["status"] == "ok"
     assert "bridge_config" in payload
-    assert set(payload["labs"].keys()) == {"rps", "drl", "c4", "euclidyne", "polyfolds"}
+    assert set(payload["labs"].keys()) == {"rps", "drl", "c4", "clue", "euclidyne", "polyfolds"}
 
 
 def test_drl_portal_page_renders(monkeypatch):
@@ -108,6 +109,15 @@ def test_drl_portal_page_renders(monkeypatch):
     assert "Deep RL Lab" in html
     assert "Table Of Contents" in html
     assert "https://deeprl-031026.wm.r.appspot.com" in html
+
+
+def test_clue_mount_page_renders():
+    app = create_app({"TESTING": True})
+    mounted_client = Client(app, Response)
+    response = mounted_client.get("/clue/")
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert "Multi-seat Clue" in html
 
 
 @pytest.mark.parametrize(
@@ -137,6 +147,7 @@ def test_toc_page_excludes_drl_but_lists_current_aix_arms():
     assert "Sister DRL is intentionally excluded here." in html
     assert "/rps/play" in html
     assert "/c4/play" in html
+    assert "/clue/" in html
     assert "/euclidyne/explorer" in html
     assert "/polyfolds/" in html
 
@@ -155,6 +166,7 @@ def test_healthz_cloud_warnings_when_db_persistence_missing(monkeypatch):
     warnings = payload["runtime_warnings"]
     assert any("RPS persistence is not configured" in item for item in warnings)
     assert any("C4 persistence is not configured" in item for item in warnings)
+    assert any("Clue persistence is not configured" in item for item in warnings)
 
 
 @pytest.mark.parametrize(

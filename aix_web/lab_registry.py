@@ -101,12 +101,13 @@ def build_lab_specs() -> list[LabSpec]:
     """
 
     from aix_web.labs.c4_adapter import load_c4_app
+    from aix_web.labs.clue_adapter import load_clue_app
     from aix_web.labs.drl_adapter import load_drl_app
     from aix_web.labs.euclidyne_adapter import load_euclidyne_app
     from aix_web.labs.polyfolds_adapter import load_polyfolds_app
     from aix_web.labs.rps_adapter import load_rps_app
 
-    default_order = ["rps", "drl", "c4", "euclidyne", "polyfolds"]
+    default_order = ["rps", "drl", "c4", "clue", "euclidyne", "polyfolds"]
     enabled_slugs = _enabled_labs_from_env(default_order)
 
     return sorted(
@@ -134,6 +135,14 @@ def build_lab_specs() -> list[LabSpec]:
                 summary="Connect4 gameplay, supervised training, and RL experiments.",
                 loader=load_c4_app,
                 enabled=("c4" in enabled_slugs),
+            ),
+            LabSpec(
+                slug="clue",
+                display_name="Clue",
+                nav_order=17,
+                summary="Classic Clue board play with filtered private state, public discussion, and mixed human/AI seats.",
+                loader=load_clue_app,
+                enabled=("clue" in enabled_slugs),
             ),
             LabSpec(
                 slug="euclidyne",
