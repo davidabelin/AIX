@@ -7,5 +7,6 @@ set "SA_EMAIL=aix-admin@aix-labs.iam.gserviceaccount.com"
 set "REPO_NAME=aix"
 set "BUCKET_NAME=aix-labs-data"
 set "SERVICE_NAME=default"
+set "CREDS_PATH=C:\Users\David\Documents\Local_Data\creds"
 set "AIX_DRL_APP_URL=https://deeprl-031026.wm.r.appspot.com"
 exit /b 0

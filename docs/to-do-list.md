@@ -48,8 +48,10 @@ Status refresh: 2026-03-17
 
 ### Clue 
 - [] see docs\clue_design.md
-- [] develop comprehensive Plan: docs\PlanForClue.md
+- [] see docs\ClueDeepDive.md
+- [] develop comprehensive Plan: docs\ClueImplementationPlan.md
 
 ### Double-digits
 - [] see docs\doubledigits_design.md
-- [] develop comprehensive Plan: docs\PlanForDD.md
+- [] see repo 
+- [] develop comprehensive Plan: docs\DoubleDigitsImplementationPlan.md

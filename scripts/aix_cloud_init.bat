@@ -6,7 +6,7 @@ set PROJECT_ID=aix-labs
 set APP_ENGINE_LOCATION=us-west1
 set REGION=us-west1
 set RUNTIME_SA=aix-admin@aix-labs.iam.gserviceaccount.com
-set KEY_FILE=%~dp0venv\aix-labs-c28515d88d16.json
+set KEY_FILE=%CREDS_PATH%\aix-labs-c28515d88d16.json
 set BUCKET=%PROJECT_ID%-data
 
 echo.
