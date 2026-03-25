@@ -9,6 +9,8 @@ dispatch:
     service: c4
   - url: "*/clue/*"
     service: clue
+  - url: "*/doubledigits/*"
+    service: doubledigits
   - url: "*/euclidyne/*"
     service: euclidyne
   - url: "*/euclidorithm/*"

@@ -89,6 +89,12 @@ def _bridge_config_snapshot() -> dict:
             "secret_key_set": _present_env("CLUE_SECRET_KEY"),
             "internal_worker_token_set": _present_env("CLUE_INTERNAL_WORKER_TOKEN"),
         },
+        "doubledigits": {
+            "repo_override_set": _present_env("AIX_DOUBLEDIGITS_REPO"),
+            "models_dir_set": _present_env("DOUBLEDIGITS_MODELS_DIR"),
+            "data_dir_set": _present_env("DOUBLEDIGITS_DATA_DIR"),
+            "artifact_cache_set": _present_env("DOUBLEDIGITS_ARTIFACT_CACHE"),
+        },
         "drl": {
             "app_url_set": _present_env("AIX_DRL_APP_URL") or _present_env("DRL_APP_URL") or _present_env("DRL_PUBLIC_URL"),
             "repo_override_set": _present_env("AIX_DRL_REPO"),
@@ -153,6 +159,19 @@ def _toc_sections() -> list[dict]:
                 {"path": "/clue/", "label": "Clue Home", "summary": "Launch page for the standalone Clue lab."},
                 {"path": "/clue/game", "label": "Game Table", "summary": "Seat-specific board, hand, notebook, and table-talk surface."},
                 {"path": "/clue/api/v1/games", "label": "Create Game API", "summary": "JSON endpoint for hosted Clue table creation."},
+            ],
+        },
+        {
+            "title": specs.get("doubledigits").display_name if specs.get("doubledigits") else "Double-digits",
+            "summary": (
+                specs.get("doubledigits").summary
+                if specs.get("doubledigits")
+                else "Guided handwritten-digit lab from single digits to two-digit composition and arithmetic scenes."
+            ),
+            "routes": [
+                {"path": "/doubledigits/", "label": "Double-digits Home", "summary": "Landing page for the standalone guided digit-composition lab."},
+                {"path": "/doubledigits/api/v1/examples", "label": "Examples API", "summary": "Curated and generated demo scenarios for each guided level."},
+                {"path": "/doubledigits/api/v1/infer", "label": "Inference API", "summary": "JSON endpoint for guided single-digit, double-digit, and arithmetic inference."},
             ],
         },
         {

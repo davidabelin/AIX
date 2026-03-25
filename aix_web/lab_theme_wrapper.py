@@ -42,6 +42,18 @@ LAB_PALETTES = {
         "bg": "#f2ead8",
         "bg_alt": "#ebe2cb",
     },
+    "doubledigits": {
+        "accent": "#9e5125",
+        "accent_2": "#1f6f78",
+        "paper": "#fcf6ef",
+        "panel": "#fffdf9",
+        "line": "#dfd4c5",
+        "muted": "#665b52",
+        "brand": "#9e5125",
+        "brand_soft": "#f4e1d0",
+        "bg": "#f8f4ee",
+        "bg_alt": "#eef5f4",
+    },
     "drl": {
         "accent": "#9a4d1a",
         "accent_2": "#1f7a75",

@@ -6,6 +6,7 @@ if errorlevel 1 goto :fail
 set "AIX_ROOT=%CD%"
 set "RPS_ROOT=%AIX_ROOT%\..\rps"
 set "C4_ROOT=%AIX_ROOT%\..\c4"
+set "DOUBLEDIGITS_ROOT=%AIX_ROOT%\..\dd"
 set "EUCLIDYNE_ROOT=%AIX_ROOT%\..\geometry\euclidyne"
 set "PF_ROOT=%AIX_ROOT%\..\pf"
 
@@ -17,14 +18,14 @@ echo Hub     : %SERVICE_NAME%
 echo DRL URL : %AIX_DRL_APP_URL%
 
 echo.
-echo [1/8] Previewing hub upload payload...
+echo [1/9] Previewing hub upload payload...
 call gcloud meta list-files-for-upload > upload-list.txt
 if errorlevel 1 goto :fail_popd
 for /f %%i in ('find /c /v "" ^< upload-list.txt') do set UPLOAD_COUNT=%%i
 echo Upload file count: %UPLOAD_COUNT%
 
 echo.
-echo [2/8] Deploying RPS service if present...
+echo [2/9] Deploying RPS service if present...
 if exist "%RPS_ROOT%\app.aix.yaml" (
   pushd "%RPS_ROOT%" >nul
   echo ^> gcloud app deploy app.aix.yaml --project="%PROJECT_ID%" --quiet
@@ -36,7 +37,7 @@ if exist "%RPS_ROOT%\app.aix.yaml" (
 )
 
 echo.
-echo [3/8] Deploying Connect4 service if present...
+echo [3/9] Deploying Connect4 service if present...
 if exist "%C4_ROOT%\app.aix.yaml" (
   pushd "%C4_ROOT%" >nul
   echo ^> gcloud app deploy app.aix.yaml --project="%PROJECT_ID%" --quiet
@@ -48,7 +49,19 @@ if exist "%C4_ROOT%\app.aix.yaml" (
 )
 
 echo.
-echo [4/8] Deploying Euclidyne service if present...
+echo [4/9] Deploying Double-digits service if present...
+if exist "%DOUBLEDIGITS_ROOT%\app.aix.yaml" (
+  pushd "%DOUBLEDIGITS_ROOT%" >nul
+  echo ^> gcloud app deploy app.aix.yaml --project="%PROJECT_ID%" --quiet
+  call gcloud app deploy app.aix.yaml --project="%PROJECT_ID%" --quiet
+  if errorlevel 1 goto :fail_popd_all
+  popd >nul
+) else (
+  echo [SKIP] %DOUBLEDIGITS_ROOT%\app.aix.yaml not found
+)
+
+echo.
+echo [5/9] Deploying Euclidyne service if present...
 if exist "%EUCLIDYNE_ROOT%\app.aix.yaml" (
   pushd "%EUCLIDYNE_ROOT%" >nul
   echo ^> gcloud app deploy app.aix.yaml --project="%PROJECT_ID%" --quiet
@@ -60,7 +73,7 @@ if exist "%EUCLIDYNE_ROOT%\app.aix.yaml" (
 )
 
 echo.
-echo [5/8] Deploying Polyfolds service if present...
+echo [6/9] Deploying Polyfolds service if present...
 if exist "%PF_ROOT%\app.aix.yaml" (
   pushd "%PF_ROOT%" >nul
   echo ^> gcloud app deploy app.aix.yaml --project="%PROJECT_ID%" --quiet
@@ -72,19 +85,19 @@ if exist "%PF_ROOT%\app.aix.yaml" (
 )
 
 echo.
-echo [6/8] Deploying default App Engine service...
+echo [7/9] Deploying default App Engine service...
 echo ^> gcloud app deploy app.yaml --project="%PROJECT_ID%" --quiet
 call gcloud app deploy app.yaml --project="%PROJECT_ID%" --quiet
 if errorlevel 1 goto :fail_popd
 
 echo.
-echo [7/8] Deploying dispatch rules...
+echo [8/9] Deploying dispatch rules...
 echo ^> gcloud app deploy dispatch.yaml --project="%PROJECT_ID%" --quiet
 call gcloud app deploy dispatch.yaml --project="%PROJECT_ID%" --quiet
 if errorlevel 1 goto :fail_popd
 
 echo.
-echo [8/8] Verifying deployed services...
+echo [9/9] Verifying deployed services...
 echo ^> gcloud app services list --project="%PROJECT_ID%"
 call gcloud app services list --project="%PROJECT_ID%"
 if errorlevel 1 goto :fail_popd

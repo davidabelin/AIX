@@ -11,6 +11,7 @@ in their own repositories and are mounted by interface.
 - `drl` remains independent as a sister app; AIX links to it through `/drl/`.
 - `c4` remains independent and is mounted under `/c4`.
 - `clue` remains independent and is mounted under `/clue`.
+- `doubledigits` remains independent and is mounted under `/doubledigits`.
 - `euclidyne` remains independent and is mounted under `/euclidyne`.
 - `polyfolds` lives in the sibling `pf` repo and is routed under `/polyfolds`.
 - Large generated datasets are not tracked in this repo by default.
@@ -46,6 +47,7 @@ python -m pip install polyhedra --no-build-isolation
 $env:AIX_RPS_REPO = "C:\\path\\to\\rps"
 $env:AIX_C4_REPO = "C:\\path\\to\\c4"
 $env:AIX_CLUE_REPO = "C:\\path\\to\\clue"
+$env:AIX_DOUBLEDIGITS_REPO = "C:\\path\\to\\dd"
 $env:AIX_EUCLIDYNE_REPO = "C:\\path\\to\\geometry\\euclidyne"
 $env:AIX_POLYFOLDS_REPO = "C:\\path\\to\\pf\\polyfolds"
 $env:AIX_POLYFOLDS_JOBS_ROOT = "C:\\path\\to\\aix\\data\\polyfolds_jobs"

@@ -38,25 +38,30 @@ Status refresh: 2026-03-17
   - `dispatch.yaml` now sends legacy `/euclidorithm/*` traffic to the AIX hub so the redirect can happen before public routing fully flips over
 
 ## Connect4
-- will a CNN classifier solve C4?
+- curious: will a CNN classifier solve C4?
  - Give it a pixel array for the board, classify into "best next move" according to best look-ahead ML agent play
 
 ## Expansion
 
-### NN's to cover under AIX 
+### Other NN's to cover under AIX?
 - [] Get at least one working interactive lab going for EVERY NN design covered in the source material
   - [] list of viable possibilities
 
 ### Clue 
-- [] see docs\clue_design.md for vague general notion
-- [] see docs\ClueDeepDive.md for *the whole story*
-- [] develop comprehensive Plan: docs\ClueImplementationPlan.md
-- My preferences include:
+- [x] see docs\clue_design.md for vague general notion
+- [x] see docs\ClueDeepDive.md for *the whole story*
+- [x] develop comprehensive Plan: docs\CluePlan_alpha.md
+- [x] My preferences include:
   - always prefer the most meaningful naming of buckets, and anything else, with as little extraneous noise in names as possible -- should be limited to at most a time stamp, or if necessary to keep names meaningful add only simple numbers like 0000.
   - make a dynamically displayed UI for human gameplay one of the initial priorities
 
 ### Double-digits
-- [] the priority is **Clue** for now but expect this soon, too:
-  - [] see docs\doubledigits_design.md
-  - [] see double-digits repo (locally at C:\Users\David\Documents\Repositories\double-digits)
-  - [] develop comprehensive Plan: docs\DoubleDigitsImplementationPlan.md
+- [x] Build the new standalone `dd` repo as the `doubledigits` AIX arm.
+  - Standalone guided Flask lab now lives in `Local_Python\dd`
+  - Migrated notebook-derived helpers, examples, narrative inventory, and provenance docs into the new repo
+  - AIX now mounts it under `/doubledigits`
+- [x] Create the first interactive guided web UI instead of keeping notebooks as the product surface.
+  - Level 1: single-digit recognition
+  - Level 2: two-digit composition
+  - Level 3: controlled arithmetic scenes
+- [ ] Phase 2: add handwriting/canvas input and richer live interaction.

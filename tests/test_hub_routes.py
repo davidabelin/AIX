@@ -27,6 +27,7 @@ def test_hub_home_renders(client):
     assert "/drl/" in html
     assert "/c4/" in html
     assert "/clue/" in html
+    assert "/doubledigits/" in html
     assert "/euclidyne/" in html
     assert "/polyfolds/" in html
 
@@ -36,9 +37,9 @@ def test_healthz_reports_configured_and_pending_labs(client):
     assert response.status_code == 200
     payload = response.get_json()
     assert payload["status"] == "ok"
-    assert set(payload["configured_labs"]) == {"rps", "drl", "c4", "clue", "euclidyne", "polyfolds"}
+    assert set(payload["configured_labs"]) == {"rps", "drl", "c4", "clue", "doubledigits", "euclidyne", "polyfolds"}
     assert set(payload["mounted_labs"]) == set()
-    assert set(payload["pending_labs"]) == {"rps", "drl", "c4", "clue", "euclidyne", "polyfolds"}
+    assert set(payload["pending_labs"]) == {"rps", "drl", "c4", "clue", "doubledigits", "euclidyne", "polyfolds"}
     assert payload["failed_labs"] == {}
 
 
@@ -96,7 +97,7 @@ def test_bridge_diagnostics_endpoint_exposes_config_snapshot(client):
     payload = response.get_json()
     assert payload["status"] == "ok"
     assert "bridge_config" in payload
-    assert set(payload["labs"].keys()) == {"rps", "drl", "c4", "clue", "euclidyne", "polyfolds"}
+    assert set(payload["labs"].keys()) == {"rps", "drl", "c4", "clue", "doubledigits", "euclidyne", "polyfolds"}
 
 
 def test_drl_portal_page_renders(monkeypatch):
@@ -118,6 +119,16 @@ def test_clue_mount_page_renders():
     assert response.status_code == 200
     html = response.get_data(as_text=True)
     assert "Multi-seat Clue" in html
+
+
+def test_doubledigits_mount_page_renders():
+    app = create_app({"TESTING": True})
+    mounted_client = Client(app, Response)
+    response = mounted_client.get("/doubledigits/")
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert "Single-digit Lab" in html
+    assert "Arithmetic Lab" in html
 
 
 @pytest.mark.parametrize(
@@ -148,6 +159,7 @@ def test_toc_page_excludes_drl_but_lists_current_aix_arms():
     assert "/rps/play" in html
     assert "/c4/play" in html
     assert "/clue/" in html
+    assert "/doubledigits/" in html
     assert "/euclidyne/explorer" in html
     assert "/polyfolds/" in html
 
