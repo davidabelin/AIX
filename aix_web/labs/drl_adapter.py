@@ -37,6 +37,7 @@ DRL_LINKS: tuple[DrlLink, ...] = (
     DrlLink("Foundations Demo", "/demos/foundations", "Interactive warm-up demo for the foundational RL arm.", "Interactive", "demo-foundations"),
     DrlLink("Finance Demo", "/demos/finance", "Interactive finance execution demo.", "Interactive", "demo-finance"),
     DrlLink("Lunar Lander", "/lunar", "Live Lunar runtime, checkpoints, and training jobs.", "Interactive", "lunar"),
+    DrlLink("Grabber", "/grabber", "Live continuous-control arm lab with PPO playback and training snapshots.", "Interactive", "grabber"),
     DrlLink("Foundations", "/sections/foundations", "Tabular RL, dynamic programming, MC, TD, and early labs.", "Arms", "foundations"),
     DrlLink("Value-Based", "/sections/value-based", "DQN lineage, navigation, and Lunar variants.", "Arms", "value-based"),
     DrlLink("Policy Gradients", "/sections/policy-gradients", "REINFORCE, PPO, actor-critic, and Pong-era material.", "Arms", "policy"),
@@ -109,6 +110,11 @@ def _build_context() -> dict:
             {
                 "label": "Lunar Lander",
                 "url": (urljoin(f"{external_url}/", "lunar") if external_url else None),
+                "enabled": bool(external_url),
+            },
+            {
+                "label": "Grabber",
+                "url": (urljoin(f"{external_url}/", "grabber") if external_url else None),
                 "enabled": bool(external_url),
             },
             {

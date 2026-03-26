@@ -164,6 +164,14 @@ def test_toc_page_excludes_drl_but_lists_current_aix_arms():
     assert "/polyfolds/" in html
 
 
+def test_contact_page_lists_clue_and_double_digits_issue_boxes(client):
+    response = client.get("/contact")
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert "https://github.com/davidabelin/clue/issues" in html
+    assert "https://github.com/davidabelin/dd/issues" in html
+
+
 def test_healthz_cloud_warnings_when_db_persistence_missing(monkeypatch):
     monkeypatch.setenv("GAE_ENV", "standard")
     monkeypatch.delenv("RPS_DATABASE_URL", raising=False)

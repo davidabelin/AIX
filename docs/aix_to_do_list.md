@@ -37,15 +37,24 @@ Status refresh: 2026-03-17
   - Implemented as explicit compatibility redirects from `/euclidorithm/*` to `/euclidyne/*`
   - `dispatch.yaml` now sends legacy `/euclidorithm/*` traffic to the AIX hub so the redirect can happen before public routing fully flips over
 
+## Polyfolds
+- [] show examples from dataset; explain why/how each is valid, invalid, or incomplete
+- [] data gen and training to happen offline; lab will:
+  - [] let users dynamically construct or submit by file their own nets, and the trained NN will evaluate and will offer probabilities it's in one cat or another
+  - [] Users can also unfold from 3D shape to 2D net, with connected edges colored the same. The 3D shape can be rotated and manipulated, and users can cliick on edges to indicate which ones to cut (if not possible to unfold as indicated, will hint by flashing edges to cut or reconnect, until a full and *definitely valid* unfolding is possible
+- [] more abstract discussion of the difficulties in generating valid nets all the time, especially the two with the tens of thousands of valids: what makes those valid, and makes others (non-trivially) invalid? 
+
 ## Connect4
 - curious: will a CNN classifier solve C4?
- - Give it a pixel array for the board, classify into "best next move" according to best look-ahead ML agent play
+ - low-priority sub-side-sub-lab
+ - Give it a pixel array for the board, classify into "best next move" according to best recorded look-ahead ML-agent play
+- [] Docstring code!
 
 ## Expansion
 
 ### Other NN's to cover under AIX?
-- [] Get at least one working interactive lab going for EVERY NN design covered in the source material
-  - [] list of viable possibilities
+- [] Choose at least one working interactive lab going for EVERY NN design covered in the source material
+  - [] generate full list of viable possibilities (whether taken from archived notebooks or something similar but more up-to-date)
 
 ### Clue 
 - [x] see docs\clue_design.md for vague general notion
@@ -54,14 +63,27 @@ Status refresh: 2026-03-17
 - [x] My preferences include:
   - always prefer the most meaningful naming of buckets, and anything else, with as little extraneous noise in names as possible -- should be limited to at most a time stamp, or if necessary to keep names meaningful add only simple numbers like 0000.
   - make a dynamically displayed UI for human gameplay one of the initial priorities
+- [] Thoroughly and meticulously add docstring to all code
+- [] Deploy online; live link from AIX main page
 
 ### Double-digits
 - [x] Build the new standalone `dd` repo as the `doubledigits` AIX arm.
   - Standalone guided Flask lab now lives in `Local_Python\dd`
   - Migrated notebook-derived helpers, examples, narrative inventory, and provenance docs into the new repo
   - AIX now mounts it under `/doubledigits`
-- [x] Create the first interactive guided web UI instead of keeping notebooks as the product surface.
-  - Level 1: single-digit recognition
-  - Level 2: two-digit composition
-  - Level 3: controlled arithmetic scenes
-- [ ] Phase 2: add handwriting/canvas input and richer live interaction.
+- [] Create the first interactive guided web UI instead of keeping notebooks as the product surface.
+  - [x] Level 1: single-digit recognition
+  - [x] Level 2: two-digit composition
+  - [x] Level 3: controlled arithmetic scenes
+  - [] Fix unresponsive UI controls
+- [] Phase 2:
+  - [] add handwriting/canvas input and richer live interaction.
+  - [] NN produces its own consistent handwriting styles with encoder/decoder architecture
+    - [] use to populate new sets of double-digit and arithmetic training targets (instead of combining several different styles randomly as it is now) and train 
+    - [] use for handwritten responses to arithmetic
+- [] Docstring all the code!
+- [] Deploy online; live link from AIX main page
+
+### Keep affected connected links up to date
+- [] /contact: need small info boxes for clue and dd now too
+- [] /euclidyne: none of the buttons to sub-labs are linked to anything live 
