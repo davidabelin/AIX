@@ -131,6 +131,17 @@ def test_doubledigits_mount_page_renders():
     assert "Arithmetic Lab" in html
 
 
+def test_euclidyne_mount_page_links_to_prefixed_sub_labs():
+    app = create_app({"TESTING": True})
+    mounted_client = Client(app, Response)
+    response = mounted_client.get("/euclidyne/")
+    assert response.status_code == 200
+    html = response.get_data(as_text=True)
+    assert 'href="/euclidyne/quick"' in html
+    assert 'href="/euclidyne/explorer"' in html
+    assert 'href="/euclidyne/gear-ratio-forge"' in html
+
+
 @pytest.mark.parametrize(
     "path",
     ["/", "/contact", "/privacy", "/toc"],

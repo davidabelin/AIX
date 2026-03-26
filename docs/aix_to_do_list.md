@@ -85,5 +85,5 @@ Status refresh: 2026-03-17
 - [] Deploy online; live link from AIX main page
 
 ### Keep affected connected links up to date
-- [] /contact: need small info boxes for clue and dd now too
-- [] /euclidyne: none of the buttons to sub-labs are linked to anything live 
+- [x] /contact: need small info boxes for clue and dd now too
+- [x] /euclidyne: none of the buttons to sub-labs are linked to anything live
