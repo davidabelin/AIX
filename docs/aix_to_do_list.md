@@ -64,7 +64,8 @@ Status refresh: 2026-03-17
   - always prefer the most meaningful naming of buckets, and anything else, with as little extraneous noise in names as possible -- should be limited to at most a time stamp, or if necessary to keep names meaningful add only simple numbers like 0000.
   - make a dynamically displayed UI for human gameplay one of the initial priorities
 - [] Thoroughly and meticulously add docstring to all code
-- [] Deploy online; live link from AIX main page
+- [x] Deploy online; live link from AIX main page
+  - Live on App Engine at `https://aix-labs.uw.r.appspot.com/clue/`
 
 ### Double-digits
 - [x] Build the new standalone `dd` repo as the `doubledigits` AIX arm.
@@ -82,7 +83,8 @@ Status refresh: 2026-03-17
     - [] use to populate new sets of double-digit and arithmetic training targets (instead of combining several different styles randomly as it is now) and train 
     - [] use for handwritten responses to arithmetic
 - [] Docstring all the code!
-- [] Deploy online; live link from AIX main page
+- [x] Deploy online; live link from AIX main page
+  - Live on App Engine at `https://aix-labs.uw.r.appspot.com/doubledigits/`
 
 ### Keep affected connected links up to date
 - [x] /contact: need small info boxes for clue and dd now too

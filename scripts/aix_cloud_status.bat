@@ -57,9 +57,7 @@ gcloud app versions list --project="%PROJECT_ID%"
 if errorlevel 1 goto :fail
 
 echo.
-echo ^> gcloud app dispatch-rules list --project="%PROJECT_ID%"
-gcloud app dispatch-rules list --project="%PROJECT_ID%"
-if errorlevel 1 goto :fail
+echo Dispatch rules are reported inside ^`gcloud app describe^`.
 
 echo.
 echo ^> gcloud secrets list --project="%PROJECT_ID%"

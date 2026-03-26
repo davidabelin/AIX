@@ -3,9 +3,8 @@
 Role
 ----
 Attach the Euclidyne app from the geometry workspace to the AIX hub.
-Euclidyne now ships as a real Python package rooted at
-``../geometry/euclidyne`` with the WSGI entrypoint at
-``euclidyne.euclidyne:app``.
+Euclidyne now ships as a standalone Flask repo rooted at
+``../geometry/euclidyne`` with the WSGI entrypoint at ``euclidyne:app``.
 
 Compatibility
 -------------
@@ -31,12 +30,14 @@ def _candidate_import_roots() -> list[Path]:
         if not override:
             continue
         repo_root = Path(override).expanduser().resolve()
-        if repo_root.name.lower() == "euclidyne" and (repo_root / "__init__.py").exists():
-            candidates.append(repo_root.parent)
+        if (repo_root / "euclidyne.py").exists():
+            candidates.append(repo_root)
+        elif (repo_root / "euclidyne" / "euclidyne.py").exists():
+            candidates.append(repo_root / "euclidyne")
         else:
             candidates.append(repo_root)
 
-    candidates.append((AIX_ROOT / ".." / "geometry").resolve())
+    candidates.append((AIX_ROOT / ".." / "geometry" / "euclidyne").resolve())
     candidates.append((AIX_ROOT / ".." / "geometry" / "euclidorithm").resolve())
     return candidates
 
@@ -68,7 +69,7 @@ def load_euclidyne_app():
 
     _ensure_import_root()
     try:
-        module = import_module("euclidyne.euclidyne")
+        module = import_module("euclidyne")
         app = getattr(module, "app")
     except ModuleNotFoundError as exc:
         if exc.name != "euclidyne":
