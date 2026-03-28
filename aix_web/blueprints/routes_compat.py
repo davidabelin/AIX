@@ -9,6 +9,8 @@ _MUTATING_SAFE_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 
 
 def _redirect_with_query(target: str, *, code: int = 307):
+    """Redirect to a target path while preserving the current query string."""
+
     query = request.query_string.decode("utf-8")
     if query:
         target = f"{target}?{query}"

@@ -114,6 +114,8 @@ _FOOTER_COPY_RE = re.compile(
 
 
 def _build_injection(slug: str) -> str:
+    """Build the CSS and back-link snippet injected into lab HTML responses."""
+
     palette = LAB_PALETTES.get(slug, LAB_PALETTES["rps"])
     return f"""
 <style id="aix-arm-theme">
@@ -232,6 +234,8 @@ def _normalize_aix_chrome(html_text: str) -> str:
 
 
 def _inject_html(html_text: str, slug: str) -> str:
+    """Inject shared AIX chrome into one HTML document when absent."""
+
     html_text = _normalize_aix_chrome(html_text)
     if 'id="aix-subpage-back"' in html_text:
         return html_text
@@ -242,6 +246,8 @@ def _inject_html(html_text: str, slug: str) -> str:
 
 
 def _header_value(headers, name: str) -> str:
+    """Return one header value from a WSGI-style header list."""
+
     for key, value in headers:
         if str(key).lower() == str(name).lower():
             return str(value)
@@ -264,6 +270,8 @@ class LabThemeWrapper:
         return getattr(self._app, "error", None)
 
     def __call__(self, environ, start_response):
+        """Dispatch one request and inject AIX chrome into HTML responses."""
+
         captured = {}
 
         def _capture_start_response(status, headers, exc_info=None):

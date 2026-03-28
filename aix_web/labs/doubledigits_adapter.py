@@ -9,6 +9,8 @@ from aix_web.bridge import add_import_path
 
 
 def _doubledigits_config_from_env() -> dict:
+    """Map ``DOUBLEDIGITS_*`` environment vars into the app config contract."""
+
     keys = [
         "MODELS_DIR",
         "DATA_DIR",
@@ -24,6 +26,8 @@ def _doubledigits_config_from_env() -> dict:
 
 
 def load_doubledigits_app():
+    """Load and return the bridged Double-digits Flask application."""
+
     add_import_path("AIX_DOUBLEDIGITS_REPO", "../dd")
     module = import_module("dd_web")
     create_app = getattr(module, "create_app")

@@ -144,10 +144,14 @@ def load_drl_app() -> Flask:
 
     @app.get("/")
     def drl_home() -> str:
+        """Render the AIX DRL sister-app portal."""
+
         return render_template("pages/drl_portal.html", **_build_context())
 
     @app.get("/healthz")
     def drl_healthz():
+        """Return lightweight health data for the AIX DRL portal."""
+
         context = _build_context()
         return jsonify(
             {

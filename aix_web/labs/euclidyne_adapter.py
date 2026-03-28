@@ -24,6 +24,8 @@ from aix_web.bridge import AIX_ROOT
 
 
 def _candidate_import_roots() -> list[Path]:
+    """Return candidate repo roots that may contain the Euclidyne entrypoint."""
+
     candidates: list[Path] = []
     for env_var in ("AIX_EUCLIDYNE_REPO", "AIX_EUCLIDORITHM_REPO"):
         override = str(os.getenv(env_var, "")).strip()
@@ -43,6 +45,8 @@ def _candidate_import_roots() -> list[Path]:
 
 
 def _ensure_import_root() -> None:
+    """Insert the first existing Euclidyne import root into ``sys.path``."""
+
     for candidate in _candidate_import_roots():
         if not candidate.exists():
             continue
@@ -57,6 +61,8 @@ def _ensure_import_root() -> None:
 
 
 def _apply_secret_override(app) -> None:
+    """Override the bridged app secret key from AIX environment hints."""
+
     for key in ("EUCLIDYNE_FLASK_SECRET_KEY", "EUCLID_FLASK_SECRET_KEY", "FLASK_SECRET_KEY"):
         secret = str(os.getenv(key, "")).strip()
         if secret:

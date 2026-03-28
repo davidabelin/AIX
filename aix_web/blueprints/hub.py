@@ -11,11 +11,15 @@ hub_bp = Blueprint("hub", __name__)
 
 
 def _sorted_mounts():
+    """Return configured lab mounts ordered by navigation position."""
+
     mounts = current_app.extensions.get("lab_mounts", [])
     return sorted(mounts, key=lambda item: int(item.spec.nav_order))
 
 
 def _mount_status(mount) -> tuple[str, str | None]:
+    """Summarize the current runtime status for one resolved lab mount."""
+
     if mount.error == "disabled" or mount.app is None:
         return "disabled", None
     runtime_error = getattr(mount.app, "error", None)
@@ -27,14 +31,20 @@ def _mount_status(mount) -> tuple[str, str | None]:
 
 
 def _is_cloud_runtime() -> bool:
+    """Return ``True`` when AIX appears to run inside a managed cloud service."""
+
     return bool(str(os.getenv("GAE_ENV", "")).strip()) or bool(str(os.getenv("K_SERVICE", "")).strip())
 
 
 def _present_env(key: str) -> bool:
+    """Return ``True`` when the named environment variable is non-empty."""
+
     return bool(str(os.getenv(key, "")).strip())
 
 
 def _runtime_warnings() -> list[str]:
+    """Collect operator-facing runtime warnings for the current environment."""
+
     warnings: list[str] = []
     if not _is_cloud_runtime():
         return warnings
@@ -57,6 +67,8 @@ def _runtime_warnings() -> list[str]:
 
 
 def _bridge_config_snapshot() -> dict:
+    """Return a non-secret snapshot of bridge-related runtime configuration."""
+
     return {
         "runtime": {
             "is_cloud_runtime": _is_cloud_runtime(),
@@ -111,6 +123,8 @@ def _bridge_config_snapshot() -> dict:
 
 
 def _toc_sections() -> list[dict]:
+    """Build the AIX table-of-contents sections from registered lab specs."""
+
     specs = {spec.slug: spec for spec in current_app.extensions.get("lab_specs", [])}
     return [
         {
@@ -219,16 +233,22 @@ def home() -> str:
 
 @hub_bp.get("/contact")
 def contact_page() -> str:
+    """Render the shared AIX contact page."""
+
     return render_template("pages/contact.html", title="Contact Us")
 
 
 @hub_bp.get("/privacy")
 def privacy_page() -> str:
+    """Render the shared AIX privacy page."""
+
     return render_template("pages/privacy.html", title="Privacy")
 
 
 @hub_bp.get("/toc")
 def toc_page() -> str:
+    """Render the AIX table-of-contents page."""
+
     return render_template("pages/toc.html", title="AIX Table of Contents", toc_sections=_toc_sections())
 
 

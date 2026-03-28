@@ -9,6 +9,8 @@ from aix_web.bridge import add_import_path
 
 
 def _clue_config_from_env() -> dict:
+    """Map ``CLUE_*`` environment vars into the Clue app config contract."""
+
     keys = [
         "DATABASE_URL",
         "DB_PATH",
@@ -24,6 +26,8 @@ def _clue_config_from_env() -> dict:
 
 
 def load_clue_app():
+    """Load and return the bridged Clue Flask application."""
+
     add_import_path("AIX_CLUE_REPO", "../clue")
     module = import_module("clue_web")
     create_app = getattr(module, "create_app")
