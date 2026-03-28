@@ -1,6 +1,6 @@
 # AIX Running List of Assorted Changes
 
-Status refresh: 2026-03-17
+Status refresh: 2026-03-26
 
 ## AIX
 - [x] Footer is supposed to use the copyleft symbol (`U+1F12F`) or `Copyleft.svg`.
@@ -10,8 +10,8 @@ Status refresh: 2026-03-17
 - [x] Get volume of recorded gameplay data from the unmaintained RPS server at `https://directed-sonar-429119-u2.uw.r.appspot.com/training`.
   - Captured from `https://directed-sonar-429119-u2.uw.r.appspot.com/api/v1/training/readiness?lookback=5`
   - Recorded volume: `55` sessions, `1,823` round rows, `1,552` training samples at `lookback=5`
-- [ ] Delete or reuse `directed-sonar-429119-u2` if it is not going to stay assigned to RPS.
-  - Blocked tonight: the active `gcloud` account in this session does not have IAM access on that project, so I could not inspect or retire it safely.
+- [] Delete or reuse `directed-sonar-429119-u2` if it is not going to stay assigned to RPS.
+  - [] issue: the active `gcloud` account in this session does not have IAM access on that project, so it could not be inspected or retired safely.
 
 ## DRL 
 ### Legacy URL: `https://drl-web-x2ulcmhaiq-wm.a.run.app/`
@@ -42,13 +42,13 @@ Status refresh: 2026-03-17
 - [] data gen and training to happen offline; lab will:
   - [] let users dynamically construct or submit by file their own nets, and the trained NN will evaluate and will offer probabilities it's in one cat or another
   - [] Users can also unfold from 3D shape to 2D net, with connected edges colored the same. The 3D shape can be rotated and manipulated, and users can cliick on edges to indicate which ones to cut (if not possible to unfold as indicated, will hint by flashing edges to cut or reconnect, until a full and *definitely valid* unfolding is possible
-- [] more abstract discussion of the difficulties in generating valid nets all the time, especially the two with the tens of thousands of valids: what makes those valid, and makes others (non-trivially) invalid? 
+- [] do a *deep dive* on the difficulties in generating valid nets, especially the two solids with the tens of thousands of valid nets: what makes those valid, compared to what makes others (non-trivially) invalid? 
 
 ## Connect4
-- curious: will a CNN classifier solve C4?
- - low-priority sub-side-sub-lab
- - Give it a pixel array for the board, classify into "best next move" according to best recorded look-ahead ML-agent play
-- [] Docstring code!
+- [] curious: will a CNN classifier solve C4?
+  - low-priority sub-side-sub-lab
+  - Give it a pixel array for the board, classify into "best next move" according to best recorded look-ahead ML-agent play
+- [] Docstring everything!
 
 ## Expansion
 
@@ -59,15 +59,21 @@ Status refresh: 2026-03-17
 ### Clue 
 - [x] see docs\clue_design.md for vague general notion
 - [x] see docs\ClueDeepDive.md for *the whole story*
-- [x] develop comprehensive Plan: docs\CluePlan_alpha.md
+- [x] develop comprehensive Plan: docs\CLUE_PLAN_alpha.md
 - [x] My preferences include:
   - always prefer the most meaningful naming of buckets, and anything else, with as little extraneous noise in names as possible -- should be limited to at most a time stamp, or if necessary to keep names meaningful add only simple numbers like 0000.
   - make a dynamically displayed UI for human gameplay one of the initial priorities
-- [] Thoroughly and meticulously add docstring to all code
 - [x] Deploy online; live link from AIX main page
   - Live on App Engine at `https://aix-labs.uw.r.appspot.com/clue/`
+- [x] Move deployed Clue off per-instance `/tmp` SQLite.
+  - Now on shared Cloud SQL (`aix-sql`) with the `clue-database-url` Secret Manager secret.
+- [x] Wire production secrets cleanly for deployed Clue.
+  - `OPENAI_API_KEY` now resolves through Secret Manager, and the production database URL does too.
+- [] Complete Clue checklist at `clue\docs\clue_to_do.md`
 
 ### Double-digits
+- [x] Deploy online; live link from AIX main page
+  - Live on App Engine at `https://aix-labs.uw.r.appspot.com/doubledigits/`
 - [x] Build the new standalone `dd` repo as the `doubledigits` AIX arm.
   - Standalone guided Flask lab now lives in `Local_Python\dd`
   - Migrated notebook-derived helpers, examples, narrative inventory, and provenance docs into the new repo
@@ -83,8 +89,6 @@ Status refresh: 2026-03-17
     - [] use to populate new sets of double-digit and arithmetic training targets (instead of combining several different styles randomly as it is now) and train 
     - [] use for handwritten responses to arithmetic
 - [] Docstring all the code!
-- [x] Deploy online; live link from AIX main page
-  - Live on App Engine at `https://aix-labs.uw.r.appspot.com/doubledigits/`
 
 ### Keep affected connected links up to date
 - [x] /contact: need small info boxes for clue and dd now too

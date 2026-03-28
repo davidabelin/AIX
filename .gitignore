@@ -22,6 +22,7 @@ exports/
 docs/image.png
 docs/image-1.png
 scripts/upload-list.txt
+docs/commit_paste.md
 
 # Sets OPENAI_API_KEY locally
 scripts/aix_local_env.bat
