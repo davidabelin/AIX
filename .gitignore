@@ -18,6 +18,7 @@ exports/
 **/labels.jsonl
 
 # TO DO artifacts
+.gitignore
 # docs/to-do-list.md
 docs/image.png
 docs/image-1.png
