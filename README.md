@@ -75,6 +75,26 @@ Cloud persistence note:
   `C4_DATABASE_URL` (or `C4_DATABASE_URL_SECRET`) and `CLUE_DATABASE_URL` to avoid
   ephemeral SQLite data loss on instance recycle.
 
+## Cloud deploy
+
+Run the shared deploy helper from the AIX repo root after your usual `gc.bat`
+setup:
+
+```powershell
+scripts\deploy
+```
+
+This wraps `scripts\aix_cloud_deploy.bat`, previews which sibling repos are in
+scope, and then deploys the AIX hub plus any lab repo with an `app.aix.yaml`
+manifest. App Engine uploads the current local filesystem contents, so
+uncommitted edits in `aix`, `clue`, or another sibling lab repo are included in
+what goes live.
+
+Clue `v1.5.0` does not change the basic deploy contract. It still deploys via
+`clue\app.aix.yaml`, but that manifest now carries the Agents SDK-related env
+vars and the built image now includes the `openai-agents` and `aiosqlite`
+dependencies from `clue\requirements.txt`.
+
 ## Polyfolds Phase-1 API
 
 Mounted under `/polyfolds`:
