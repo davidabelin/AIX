@@ -3,7 +3,8 @@ setlocal
 call "%~dp0aix_cloud_env.bat"
 pushd "%~dp0" >nul 2>&1
 if errorlevel 1 goto :fail
-set "AIX_ROOT=%CD%"
+REM set "AIX_ROOT=%CD%"
+set "AIX_ROOT=C:\Users\David\Documents\Local_Python\aix"
 set "RPS_ROOT=%AIX_ROOT%\..\rps"
 set "C4_ROOT=%AIX_ROOT%\..\c4"
 set "CLUE_ROOT=%AIX_ROOT%\..\clue"
@@ -17,6 +18,7 @@ echo Project : %PROJECT_ID%
 echo Region  : %REGION%
 echo Hub     : %SERVICE_NAME%
 echo DRL URL : %AIX_DRL_APP_URL%
+echo AIX Root : %AIX_ROOT%
 
 echo.
 echo [1/10] Previewing hub upload payload...
@@ -98,29 +100,32 @@ if exist "%PF_ROOT%\app.aix.yaml" (
 )
 
 echo.
-echo [8/10] Deploying default App Engine service...
+echo [8/10] Deploying default AIX App Engine service...
+echo ^> cd %AIX_ROOT%
+cd %AIX_ROOT%
 echo ^> gcloud app deploy app.yaml --project="%PROJECT_ID%" --quiet
 call gcloud app deploy app.yaml --project="%PROJECT_ID%" --quiet
 if errorlevel 1 goto :fail_popd
 
 echo.
-echo [9/10] Deploying dispatch rules...
+echo [9/10] Deploying AIX dispatch rules...
 echo ^> gcloud app deploy dispatch.yaml --project="%PROJECT_ID%" --quiet
 call gcloud app deploy dispatch.yaml --project="%PROJECT_ID%" --quiet
 if errorlevel 1 goto :fail_popd
 
 echo.
-echo [10/10] Verifying deployed services...
+echo [10/10] Verifying deployed AIX services...
 echo ^> gcloud app services list --project="%PROJECT_ID%"
 call gcloud app services list --project="%PROJECT_ID%"
 if errorlevel 1 goto :fail_popd
 echo.
+echo ... and versions.
 echo ^> gcloud app versions list --project="%PROJECT_ID%"
 call gcloud app versions list --project="%PROJECT_ID%"
 if errorlevel 1 goto :fail_popd
 
 echo.
-echo [OK] App Engine deploy finished.
+echo [OK] AIX App Engine and its services deployed successfully.
 popd >nul
 endlocal
 exit /b 0

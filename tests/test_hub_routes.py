@@ -129,6 +129,22 @@ def test_doubledigits_mount_page_renders():
     html = response.get_data(as_text=True)
     assert "Single-digit Lab" in html
     assert "Arithmetic Lab" in html
+    assert '"apiBase": "/doubledigits/api/v1"' in html
+
+
+def test_doubledigits_mount_api_endpoints_remain_prefixed():
+    app = create_app({"TESTING": True})
+    mounted_client = Client(app, Response)
+
+    examples_response = mounted_client.get("/doubledigits/api/v1/examples?level=single")
+    assert examples_response.status_code == 200
+    examples_payload = examples_response.get_json()
+    assert examples_payload["level"] == "single"
+
+    presets_response = mounted_client.get("/doubledigits/api/v1/presets?level=single")
+    assert presets_response.status_code == 200
+    presets_payload = presets_response.get_json()
+    assert presets_payload["default_preset"] == "single_mnist_dense"
 
 
 def test_euclidyne_mount_page_links_to_prefixed_sub_labs():
