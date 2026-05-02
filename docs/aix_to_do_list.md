@@ -1,8 +1,30 @@
 # AIX Running List of Assorted Changes
 
-Status refresh: 2026-03-26
+## TO DO **TODAY**
+
+- [] SHRINK the entire AIX webapp repo!
+  - Reduce in size every item on every page beneath the "AIX Labs" uber-app (with the *sole* exception of the Clue sub-app, because that one has already been touched).
+  - [] The target scale is 75%  of the present size, across the board. That means:
+    - font sizes (limits:  6 points min to 36 points **max**)
+    - sizes and arrangement of boxes and panels
+    - padding inside boxes and panels
+    - layout and size of bubbles and buttons
+    - etc.: literally, *everything* gets shrunk
+
+- [] THEN, condense and arrange everything so it fits together aesthetically and functionally much better than it did before
+  - Spend time getting this part right, the 'feel' of the app
+  - Take it beyond the "shrinkage" stage to the "fix" stage
+    - Example of a page that needs "arrangement" help beyond simple shrinkage: ![Connect4 Training Page](<Screenshot 2026-05-02 144809.jpg>)
+
+- [] Final UI pass for this action: **BALANCE and PROPORTION** in size and position (all in the same general AIX "style" with each sub-component slightly different in details)
+  - [] Smooth over any rough spots from the universal resizing stage.
+  
+---
+
+## Last Status refresh: 2026-03-26
 
 ## AIX
+
 - [x] Footer is supposed to use the copyleft symbol (`U+1F12F`) or `Copyleft.svg`.
   - AIX hub/templates now use `aix_web/static/icons/copyleft.svg`.
   - Euclidyne standalone chrome now uses the copyleft symbol directly.

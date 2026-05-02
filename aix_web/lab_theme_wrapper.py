@@ -117,6 +117,50 @@ def _build_injection(slug: str) -> str:
     """Build the CSS and back-link snippet injected into lab HTML responses."""
 
     palette = LAB_PALETTES.get(slug, LAB_PALETTES["rps"])
+    compact = slug != "clue"
+    body_font_size = "0.86rem" if compact else "initial"
+    header_gap = "0.55rem" if compact else "0.8rem"
+    header_padding = "0.66rem clamp(0.7rem, 2vw, 1.35rem)" if compact else "1rem clamp(0.9rem, 3vw, 1.6rem)"
+    nav_gap = "0.42rem" if compact else "0.7rem"
+    main_width = "min(900px, 94vw)" if compact else "min(1020px, 94vw)"
+    main_margin = "0.8rem auto 1.35rem" if compact else "1.15rem auto 2rem"
+    main_gap = "0.62rem" if compact else "0.9rem"
+    panel_radius = "10px" if compact else "14px"
+    panel_padding = "0.62rem 0.72rem" if compact else "0.95rem 1.05rem"
+    panel_shadow = "0 7px 18px rgba(16, 12, 9, 0.07)" if compact else "0 8px 24px rgba(16, 12, 9, 0.08)"
+    back_right = "12px" if compact else "16px"
+    back_bottom = "11px" if compact else "14px"
+    back_padding = "7px 10px" if compact else "9px 12px"
+    back_font_size = "0.78rem" if compact else "0.88rem"
+    compact_overrides = (
+        """
+  body {
+    overflow-x: hidden;
+  }
+  main, .page {
+    max-width: calc(100vw - 0.8rem);
+    min-width: 0;
+  }
+  section, .panel, .card {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  input, select, button, textarea {
+    max-width: 100%;
+  }
+  @media (max-width: 700px) {
+    main, .page {
+      width: calc(100vw - 0.8rem);
+    }
+    section, .panel, .card {
+      overflow-x: auto;
+    }
+  }
+"""
+        if compact
+        else ""
+    )
     return f"""
 <style id="aix-arm-theme">
   :root {{
@@ -136,6 +180,7 @@ def _build_injection(slug: str) -> str:
   }}
   body {{
     font-family: "Space Grotesk", "Segoe UI", sans-serif;
+    font-size: {body_font_size};
     color: var(--ink, #1f1f24);
     background:
       radial-gradient(circle at 20% 10%, var(--brand-soft) 0%, transparent 40%),
@@ -150,28 +195,28 @@ def _build_injection(slug: str) -> str:
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.8rem;
-    padding: 1rem clamp(0.9rem, 3vw, 1.6rem);
+    gap: {header_gap};
+    padding: {header_padding};
     background: var(--paper);
     border-bottom: 1px solid var(--line);
   }}
   nav {{
     display: flex;
-    gap: 0.7rem;
+    gap: {nav_gap};
     flex-wrap: wrap;
   }}
   main {{
-    width: min(1020px, 94vw);
-    margin: 1.15rem auto 2rem;
+    width: {main_width};
+    margin: {main_margin};
     display: grid;
-    gap: 0.9rem;
+    gap: {main_gap};
   }}
   section, .panel, .card {{
     background: var(--panel);
     border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 0.95rem 1.05rem;
-    box-shadow: 0 8px 24px rgba(16, 12, 9, 0.08);
+    border-radius: {panel_radius};
+    padding: {panel_padding};
+    box-shadow: {panel_shadow};
   }}
   a {{
     color: var(--brand);
@@ -187,15 +232,15 @@ def _build_injection(slug: str) -> str:
   }}
   #aix-subpage-back {{
     position: fixed;
-    right: 16px;
-    bottom: 14px;
+    right: {back_right};
+    bottom: {back_bottom};
     z-index: 9999;
     text-decoration: none;
     color: #fff;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     border-radius: 999px;
-    padding: 9px 12px;
-    font-size: 0.88rem;
+    padding: {back_padding};
+    font-size: {back_font_size};
     font-weight: 600;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
   }}
@@ -214,6 +259,7 @@ def _build_injection(slug: str) -> str:
     max-height: 16px;
     flex: 0 0 auto;
   }}
+{compact_overrides}
 </style>
 <a id="aix-subpage-back" href="/">AIX Labs</a>
 """.strip()
