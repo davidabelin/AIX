@@ -101,7 +101,7 @@ def test_bridge_diagnostics_endpoint_exposes_config_snapshot(client):
 
 
 def test_drl_portal_page_renders(monkeypatch):
-    monkeypatch.setenv("AIX_DRL_APP_URL", "https://deeprl-031026.wm.r.appspot.com")
+    monkeypatch.setenv("AIX_DRL_APP_URL", "https://drl-web-x2ulcmhaiq-wm.a.run.app")
     app = create_app({"TESTING": True})
     mounted_client = Client(app, Response)
     response = mounted_client.get("/drl/")
@@ -109,7 +109,7 @@ def test_drl_portal_page_renders(monkeypatch):
     html = response.get_data(as_text=True)
     assert "Deep RL Lab" in html
     assert "Table Of Contents" in html
-    assert "https://deeprl-031026.wm.r.appspot.com" in html
+    assert "https://drl-web-x2ulcmhaiq-wm.a.run.app" in html
 
 
 def test_clue_mount_page_renders():
