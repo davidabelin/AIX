@@ -48,19 +48,19 @@ def _runtime_warnings() -> list[str]:
     warnings: list[str] = []
     if not _is_cloud_runtime():
         return warnings
-    if not (_present_env("RPS_DATABASE_URL") or _present_env("RPS_DATABASE_URL_SECRET")):
+    if not (_present_env("RPS_DATABASE_URL") or _present_env("RPS_DATABASE_URL_SECRET") or _present_env("RPS_DB_SNAPSHOT_URI")):
         warnings.append(
-            "RPS persistence is not configured (set RPS_DATABASE_URL or RPS_DATABASE_URL_SECRET). "
+            "RPS persistence is not configured (set RPS_DATABASE_URL, RPS_DATABASE_URL_SECRET, or RPS_DB_SNAPSHOT_URI). "
             "Cloud instance restarts can lose local SQLite data."
         )
-    if not (_present_env("C4_DATABASE_URL") or _present_env("C4_DATABASE_URL_SECRET")):
+    if not (_present_env("C4_DATABASE_URL") or _present_env("C4_DATABASE_URL_SECRET") or _present_env("C4_DB_SNAPSHOT_URI")):
         warnings.append(
-            "C4 persistence is not configured (set C4_DATABASE_URL or C4_DATABASE_URL_SECRET). "
+            "C4 persistence is not configured (set C4_DATABASE_URL, C4_DATABASE_URL_SECRET, or C4_DB_SNAPSHOT_URI). "
             "Cloud instance restarts can lose local SQLite data."
         )
-    if not _present_env("CLUE_DATABASE_URL"):
+    if not (_present_env("CLUE_DATABASE_URL") or _present_env("CLUE_DATABASE_URL_SECRET") or _present_env("CLUE_DB_SNAPSHOT_URI")):
         warnings.append(
-            "Clue persistence is not configured (set CLUE_DATABASE_URL). "
+            "Clue persistence is not configured (set CLUE_DATABASE_URL, CLUE_DATABASE_URL_SECRET, or CLUE_DB_SNAPSHOT_URI). "
             "Cloud instance restarts can lose local SQLite data."
         )
     return warnings
@@ -81,6 +81,7 @@ def _bridge_config_snapshot() -> dict:
             "database_url_set": _present_env("RPS_DATABASE_URL"),
             "database_url_secret_set": _present_env("RPS_DATABASE_URL_SECRET"),
             "db_path_set": _present_env("RPS_DB_PATH"),
+            "db_snapshot_uri_set": _present_env("RPS_DB_SNAPSHOT_URI"),
             "events_dir_set": _present_env("RPS_EVENTS_DIR"),
             "models_dir_set": _present_env("RPS_MODELS_DIR"),
             "exports_dir_set": _present_env("RPS_EXPORTS_DIR"),
@@ -90,6 +91,7 @@ def _bridge_config_snapshot() -> dict:
             "database_url_set": _present_env("C4_DATABASE_URL"),
             "database_url_secret_set": _present_env("C4_DATABASE_URL_SECRET"),
             "db_path_set": _present_env("C4_DB_PATH"),
+            "db_snapshot_uri_set": _present_env("C4_DB_SNAPSHOT_URI"),
             "events_dir_set": _present_env("C4_EVENTS_DIR"),
             "models_dir_set": _present_env("C4_MODELS_DIR"),
             "exports_dir_set": _present_env("C4_EXPORTS_DIR"),
@@ -97,7 +99,9 @@ def _bridge_config_snapshot() -> dict:
         "clue": {
             "repo_override_set": _present_env("AIX_CLUE_REPO"),
             "database_url_set": _present_env("CLUE_DATABASE_URL"),
+            "database_url_secret_set": _present_env("CLUE_DATABASE_URL_SECRET"),
             "db_path_set": _present_env("CLUE_DB_PATH"),
+            "db_snapshot_uri_set": _present_env("CLUE_DB_SNAPSHOT_URI"),
             "secret_key_set": _present_env("CLUE_SECRET_KEY"),
             "internal_worker_token_set": _present_env("CLUE_INTERNAL_WORKER_TOKEN"),
         },

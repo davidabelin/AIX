@@ -29,6 +29,7 @@ def _c4_config_from_env() -> dict:
         "DATABASE_URL",
         "DATABASE_URL_SECRET",
         "DB_PATH",
+        "DB_SNAPSHOT_URI",
         "EVENTS_DIR",
         "MODELS_DIR",
         "EXPORTS_DIR",

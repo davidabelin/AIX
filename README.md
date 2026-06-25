@@ -71,9 +71,11 @@ Legacy `/euclidorithm/*` links are redirected to `/euclidyne/*` during the trans
 
 Cloud persistence note:
 
-- On App Engine, configure `RPS_DATABASE_URL` (or `RPS_DATABASE_URL_SECRET`) and
-  `C4_DATABASE_URL` (or `C4_DATABASE_URL_SECRET`) and `CLUE_DATABASE_URL` to avoid
-  ephemeral SQLite data loss on instance recycle.
+- On App Engine, AIX uses local SQLite under `/tmp` plus Cloud Storage snapshots
+  for low-cost durability. Configure `RPS_DB_SNAPSHOT_URI`, `C4_DB_SNAPSHOT_URI`,
+  and `CLUE_DB_SNAPSHOT_URI` when mounting sibling labs through the hub.
+- Direct database URLs remain supported by the sibling lab repos for local or
+  rollback scenarios, but AIX no longer requires Cloud SQL.
 
 ## Cloud deploy
 

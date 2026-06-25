@@ -2,6 +2,9 @@
 setlocal EnableExtensions
 cd /d "%~dp0"
 
+set ROTATE_WORKER_TOKENS=0
+if /i "%~1"=="--rotate-worker-tokens" set ROTATE_WORKER_TOKENS=1
+
 set PROJECT_ID=aix-labs
 set APP_ENGINE_LOCATION=us-west1
 set REGION=us-west1
@@ -75,7 +78,7 @@ call gcloud storage buckets add-iam-policy-binding gs://%BUCKET% --member=servic
 if errorlevel 1 goto :fatal
 
 echo.
-echo [7/10] Creating/updating worker token secrets...
+echo [7/10] Creating worker token secrets if missing...
 for /f "delims=" %%i in ('python -c "import secrets; print(secrets.token_urlsafe(48))"') do set RPS_TOKEN=%%i
 if not defined RPS_TOKEN goto :fatal
 for /f "delims=" %%i in ('python -c "import secrets; print(secrets.token_urlsafe(48))"') do set C4_TOKEN=%%i
@@ -86,8 +89,12 @@ if errorlevel 1 (
   echo %RPS_TOKEN%| call gcloud secrets create rps-worker-token --project=%PROJECT_ID% --replication-policy=automatic --data-file=-
   if errorlevel 1 goto :fatal
 ) else (
-  echo %RPS_TOKEN%| call gcloud secrets versions add rps-worker-token --project=%PROJECT_ID% --data-file=-
-  if errorlevel 1 goto :fatal
+  if "%ROTATE_WORKER_TOKENS%"=="1" (
+    echo %RPS_TOKEN%| call gcloud secrets versions add rps-worker-token --project=%PROJECT_ID% --data-file=-
+    if errorlevel 1 goto :fatal
+  ) else (
+    echo rps-worker-token already exists; keeping current latest version.
+  )
 )
 
 call gcloud secrets describe c4-worker-token --project=%PROJECT_ID% >nul 2>nul
@@ -95,8 +102,12 @@ if errorlevel 1 (
   echo %C4_TOKEN%| call gcloud secrets create c4-worker-token --project=%PROJECT_ID% --replication-policy=automatic --data-file=-
   if errorlevel 1 goto :fatal
 ) else (
-  echo %C4_TOKEN%| call gcloud secrets versions add c4-worker-token --project=%PROJECT_ID% --data-file=-
-  if errorlevel 1 goto :fatal
+  if "%ROTATE_WORKER_TOKENS%"=="1" (
+    echo %C4_TOKEN%| call gcloud secrets versions add c4-worker-token --project=%PROJECT_ID% --data-file=-
+    if errorlevel 1 goto :fatal
+  ) else (
+    echo c4-worker-token already exists; keeping current latest version.
+  )
 )
 
 echo.

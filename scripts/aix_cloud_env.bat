@@ -9,4 +9,7 @@ set "BUCKET_NAME=aix-labs-data"
 set "SERVICE_NAME=default"
 set "CREDS_PATH=C:\Users\David\Documents\Local_Data\creds"
 set "AIX_DRL_APP_URL=https://drl-web-x2ulcmhaiq-wm.a.run.app"
+set "RPS_DB_SNAPSHOT_URI=gs://aix-labs-data/rps/db/rps.sqlite3"
+set "C4_DB_SNAPSHOT_URI=gs://aix-labs-data/c4/db/c4.sqlite3"
+set "CLUE_DB_SNAPSHOT_URI=gs://aix-labs-data/clue/db/clue.sqlite3"
 exit /b 0

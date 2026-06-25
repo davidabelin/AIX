@@ -13,7 +13,9 @@ def _clue_config_from_env() -> dict:
 
     keys = [
         "DATABASE_URL",
+        "DATABASE_URL_SECRET",
         "DB_PATH",
+        "DB_SNAPSHOT_URI",
         "SECRET_KEY",
         "INTERNAL_WORKER_TOKEN",
     ]

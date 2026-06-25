@@ -203,8 +203,13 @@ def test_healthz_cloud_warnings_when_db_persistence_missing(monkeypatch):
     monkeypatch.setenv("GAE_ENV", "standard")
     monkeypatch.delenv("RPS_DATABASE_URL", raising=False)
     monkeypatch.delenv("RPS_DATABASE_URL_SECRET", raising=False)
+    monkeypatch.delenv("RPS_DB_SNAPSHOT_URI", raising=False)
     monkeypatch.delenv("C4_DATABASE_URL", raising=False)
     monkeypatch.delenv("C4_DATABASE_URL_SECRET", raising=False)
+    monkeypatch.delenv("C4_DB_SNAPSHOT_URI", raising=False)
+    monkeypatch.delenv("CLUE_DATABASE_URL", raising=False)
+    monkeypatch.delenv("CLUE_DATABASE_URL_SECRET", raising=False)
+    monkeypatch.delenv("CLUE_DB_SNAPSHOT_URI", raising=False)
     app = create_hub_app({"TESTING": True})
     client = app.test_client()
     response = client.get("/healthz")
@@ -214,6 +219,26 @@ def test_healthz_cloud_warnings_when_db_persistence_missing(monkeypatch):
     assert any("RPS persistence is not configured" in item for item in warnings)
     assert any("C4 persistence is not configured" in item for item in warnings)
     assert any("Clue persistence is not configured" in item for item in warnings)
+
+
+def test_healthz_cloud_warnings_accept_snapshot_persistence(monkeypatch):
+    monkeypatch.setenv("GAE_ENV", "standard")
+    monkeypatch.setenv("RPS_DB_SNAPSHOT_URI", "gs://aix-labs-data/rps/db/rps.sqlite3")
+    monkeypatch.setenv("C4_DB_SNAPSHOT_URI", "gs://aix-labs-data/c4/db/c4.sqlite3")
+    monkeypatch.setenv("CLUE_DB_SNAPSHOT_URI", "gs://aix-labs-data/clue/db/clue.sqlite3")
+    monkeypatch.delenv("RPS_DATABASE_URL", raising=False)
+    monkeypatch.delenv("RPS_DATABASE_URL_SECRET", raising=False)
+    monkeypatch.delenv("C4_DATABASE_URL", raising=False)
+    monkeypatch.delenv("C4_DATABASE_URL_SECRET", raising=False)
+    monkeypatch.delenv("CLUE_DATABASE_URL", raising=False)
+    monkeypatch.delenv("CLUE_DATABASE_URL_SECRET", raising=False)
+    app = create_hub_app({"TESTING": True})
+    client = app.test_client()
+
+    response = client.get("/healthz")
+
+    assert response.status_code == 200
+    assert response.get_json()["runtime_warnings"] == []
 
 
 @pytest.mark.parametrize(

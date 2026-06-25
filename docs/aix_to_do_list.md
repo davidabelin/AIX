@@ -87,8 +87,8 @@
   - make a dynamically displayed UI for human gameplay one of the initial priorities
 - [x] Deploy online; live link from AIX main page
   - Live on App Engine at `https://aix-labs.uw.r.appspot.com/clue/`
-- [x] Move deployed Clue off per-instance `/tmp` SQLite.
-  - Now on shared Cloud SQL (`aix-sql`) with the `clue-database-url` Secret Manager secret.
+- [x] Move deployed Clue off costly Cloud SQL.
+  - AIX now uses `/tmp` SQLite plus Cloud Storage snapshots for low-cost durability.
 - [x] Wire production secrets cleanly for deployed Clue.
   - `OPENAI_API_KEY` now resolves through Secret Manager, and the production database URL does too.
 - [] Complete Clue checklist at `clue\docs\clue_to_do.md`
