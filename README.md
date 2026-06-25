@@ -92,7 +92,7 @@ manifest. App Engine uploads the current local filesystem contents, so
 uncommitted edits in `aix`, `clue`, or another sibling lab repo are included in
 what goes live.
 
-Clue `v1.5.0` does not change the basic deploy contract. It still deploys via
+Clue `v1.9.5` does not change the basic deploy contract. It still deploys via
 `clue\app.aix.yaml`, but that manifest now carries the Agents SDK-related env
 vars and the built image now includes the `openai-agents` and `aiosqlite`
 dependencies from `clue\requirements.txt`.
