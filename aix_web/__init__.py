@@ -52,26 +52,39 @@ def create_hub_app(config: dict | None = None) -> Flask:
         app.config.update(config)
 
     @app.before_request
-    def redirect_polyfolds_service_host():
-        """Redirect bare Polyfolds service-host requests into ``/polyfolds``.
+    def redirect_service_host_aliases():
+        """Redirect confusing service-host aliases into canonical AIX paths.
 
         Notes
         -----
-        This keeps the standalone ``polyfolds-dot-...`` host landing on the
-        Polyfolds service even though the default AIX service still receives the
-        initial request in some routing paths.
+        App Engine exposes service hostnames such as ``clue-dot-...`` whether
+        or not the product should link to them. Canonical public navigation
+        should stay on ``aix-labs.uw.r.appspot.com`` with path-based lab URLs.
         """
 
         host = (request.host or "").split(":", 1)[0].lower()
-        if host != "polyfolds-dot-aix-labs.uw.r.appspot.com":
-            return None
         path = request.path or "/"
-        if path.startswith("/polyfolds"):
-            return None
-        target = "/polyfolds/" if path == "/" else f"/polyfolds{path}"
-        if request.query_string:
-            target = f"{target}?{request.query_string.decode('utf-8', errors='ignore')}"
-        return redirect(target, code=302)
+        query = request.query_string.decode("utf-8", errors="ignore")
+
+        if host == "clue-dot-aix-labs.uw.r.appspot.com":
+            if not path.startswith("/clue"):
+                path = "/clue/" if path == "/" else f"/clue{path}"
+            elif path == "/clue":
+                path = "/clue/"
+            target = f"https://aix-labs.uw.r.appspot.com{path}"
+            if query:
+                target = f"{target}?{query}"
+            return redirect(target, code=301)
+
+        if host == "polyfolds-dot-aix-labs.uw.r.appspot.com":
+            if path.startswith("/polyfolds"):
+                return None
+            target = "/polyfolds/" if path == "/" else f"/polyfolds{path}"
+            if query:
+                target = f"{target}?{query}"
+            return redirect(target, code=302)
+
+        return None
 
     specs = build_lab_specs()
     mounts = resolve_lab_mounts(specs)
@@ -85,7 +98,7 @@ def create_hub_app(config: dict | None = None) -> Flask:
         nav_mounts = [
             mount
             for mount in app.extensions.get("lab_mounts", [])
-            if mount.spec.enabled and mount.app is not None
+            if mount.spec.enabled and (mount.app is not None or mount.error == "deployed-service")
         ]
         nav_mounts = sorted(nav_mounts, key=lambda item: int(item.spec.nav_order))
         return {"hub_nav_mounts": nav_mounts}

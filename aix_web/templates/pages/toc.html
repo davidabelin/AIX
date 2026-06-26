@@ -18,9 +18,13 @@
     <div class="toc-route-list">
       {% for route in section.routes %}
       <div class="toc-route">
+        {% if route.link is defined and not route.link %}
+        <span class="toc-route-path"><code>{{ route.path }}</code></span>
+        {% else %}
         <a class="toc-route-path" href="{{ route.path }}"><code>{{ route.path }}</code></a>
+        {% endif %}
         <div class="toc-route-copy">
-          <strong>{{ route.label }}</strong>
+          <strong>{% if route.method %}{{ route.method }} {% endif %}{{ route.label }}</strong>
           <span>{{ route.summary }}</span>
         </div>
       </div>

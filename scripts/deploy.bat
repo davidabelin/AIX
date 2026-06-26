@@ -15,7 +15,6 @@ if errorlevel 1 goto :fail
 for %%I in ("%CD%\..") do set "AIX_ROOT=%%~fI"
 set "RPS_ROOT=%AIX_ROOT%\..\rps"
 set "C4_ROOT=%AIX_ROOT%\..\c4"
-set "CLUE_ROOT=%AIX_ROOT%\..\clue"
 set "DOUBLEDIGITS_ROOT=%AIX_ROOT%\..\dd"
 set "EUCLIDYNE_ROOT=%AIX_ROOT%\..\geometry\euclidyne"
 set "PF_ROOT=%AIX_ROOT%\..\pf"
@@ -26,9 +25,11 @@ echo Project : %PROJECT_ID%
 echo Region  : %REGION%
 echo Service : %SERVICE_NAME%
 echo.
-echo This deploy uploads the current local working trees for AIX and any sibling
-echo lab repo that has an App Engine manifest. Uncommitted local edits are part
-echo of the payload; Git commits are not required for the deployed code to change.
+echo This deploy uploads the current local working trees for AIX-managed services
+echo and sibling lab repos still deployed with AIX. Clue is intentionally excluded;
+echo deploy Clue separately from ..\clue\deploy_clue.bat.
+echo Uncommitted local edits are part of the payload; Git commits are not required
+echo for the deployed code to change.
 echo Assumes gc.bat or an equivalent gcloud auth/config setup has already run.
 
 call :check_tool gcloud
@@ -41,7 +42,6 @@ echo [1/2] Deployment scope preview...
 call :show_repo_state "AIX hub" "%AIX_ROOT%" "app.yaml"
 call :show_repo_state "RPS" "%RPS_ROOT%" "app.aix.yaml"
 call :show_repo_state "Connect4" "%C4_ROOT%" "app.aix.yaml"
-call :show_repo_state "Clue" "%CLUE_ROOT%" "app.aix.yaml"
 call :show_repo_state "Double-digits" "%DOUBLEDIGITS_ROOT%" "app.aix.yaml"
 call :show_repo_state "Euclidyne" "%EUCLIDYNE_ROOT%" "app.aix.yaml"
 call :show_repo_state "Polyfolds" "%PF_ROOT%" "app.aix.yaml"
@@ -60,8 +60,9 @@ exit /b 0
 :help
 echo Usage: scripts\deploy
 echo.
-echo Runs the standard multi-service App Engine deployment for AIX and sibling labs.
+echo Runs the standard multi-service App Engine deployment for AIX-managed services.
 echo Assumes gc.bat has already selected the service account and gcloud project.
+echo Clue is not included; deploy it separately with ..\clue\deploy_clue.bat.
 echo.
 echo Deploy behavior:
 echo   - uploads current local filesystem contents, including uncommitted edits

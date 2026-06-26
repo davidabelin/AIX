@@ -27,6 +27,7 @@ LabLoader = Callable[[], Any]
 SLUG_ALIASES = {
     "euclidorithm": "euclidyne",
 }
+DEFAULT_DISPATCH_SERVICE_SLUGS = {"rps", "c4", "clue", "doubledigits", "euclidyne", "polyfolds"}
 
 
 @dataclass(slots=True)
@@ -79,6 +80,27 @@ def _enabled_labs_from_env(default_slugs: list[str]) -> set[str]:
         if token.strip()
     }
     return enabled or set(default_slugs)
+
+
+def _is_cloud_runtime() -> bool:
+    """Return whether the hub is running in a managed cloud service."""
+
+    return bool(str(os.getenv("GAE_ENV", "")).strip()) or bool(str(os.getenv("K_SERVICE", "")).strip())
+
+
+def _dispatch_service_slugs() -> set[str]:
+    """Return lab slugs served by App Engine dispatch rather than local imports."""
+
+    raw = str(os.getenv("AIX_DISPATCH_SERVICE_LABS", "")).strip()
+    if raw:
+        return {
+            SLUG_ALIASES.get(token.strip().lower(), token.strip().lower())
+            for token in raw.split(",")
+            if token.strip()
+        }
+    if _is_cloud_runtime():
+        return set(DEFAULT_DISPATCH_SERVICE_SLUGS)
+    return set()
 
 
 def build_lab_specs() -> list[LabSpec]:
@@ -188,9 +210,13 @@ def resolve_lab_mounts(specs: list[LabSpec]) -> list[LabMount]:
     """
 
     mounts: list[LabMount] = []
+    dispatch_service_slugs = _dispatch_service_slugs()
     for spec in specs:
         if not spec.enabled:
             mounts.append(LabMount(spec=spec, app=None, error="disabled"))
+            continue
+        if spec.slug in dispatch_service_slugs:
+            mounts.append(LabMount(spec=spec, app=None, error="deployed-service"))
             continue
         app = LazyMountApp(name=spec.slug, loader=spec.loader)
         mounts.append(LabMount(spec=spec, app=app, error=None))

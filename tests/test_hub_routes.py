@@ -7,6 +7,14 @@ from werkzeug.wrappers import Response
 from aix_web import create_app, create_hub_app
 
 
+@pytest.fixture(autouse=True)
+def _stable_runtime_env(monkeypatch):
+    monkeypatch.delenv("AIX_DISPATCH_SERVICE_LABS", raising=False)
+    monkeypatch.delenv("AIX_ENABLED_LABS", raising=False)
+    monkeypatch.delenv("GAE_ENV", raising=False)
+    monkeypatch.delenv("K_SERVICE", raising=False)
+
+
 @pytest.fixture
 def app():
     app = create_hub_app({"TESTING": True})
@@ -33,14 +41,21 @@ def test_hub_home_renders(client):
 
 
 def test_healthz_reports_configured_and_pending_labs(client):
-    response = client.get("/healthz")
+    response = client.get("/diagnostics/healthz")
     assert response.status_code == 200
     payload = response.get_json()
     assert payload["status"] == "ok"
     assert set(payload["configured_labs"]) == {"rps", "drl", "c4", "clue", "doubledigits", "euclidyne", "polyfolds"}
     assert set(payload["mounted_labs"]) == set()
+    assert set(payload["deployed_service_labs"]) == set()
     assert set(payload["pending_labs"]) == {"rps", "drl", "c4", "clue", "doubledigits", "euclidyne", "polyfolds"}
     assert payload["failed_labs"] == {}
+
+
+def test_legacy_healthz_alias_still_reports_local_health(client):
+    response = client.get("/healthz")
+    assert response.status_code == 200
+    assert response.get_json()["service"] == "aix-hub"
 
 
 @pytest.mark.parametrize(
@@ -183,10 +198,16 @@ def test_toc_page_excludes_drl_but_lists_current_aix_arms():
     html = response.get_data(as_text=True)
     assert "AIX Table of Contents" in html
     assert "Sister DRL is intentionally excluded here." in html
+    assert "/diagnostics/healthz" in html
     assert "/rps/play" in html
     assert "/c4/play" in html
     assert "/clue/" in html
+    assert 'href="/clue/game"' not in html
+    assert 'href="/clue/api/v1/games"' not in html
+    assert "POST Create Game API" in html
     assert "/doubledigits/" in html
+    assert 'href="/doubledigits/api/v1/infer"' not in html
+    assert "POST Inference API" in html
     assert "/euclidyne/explorer" in html
     assert "/polyfolds/" in html
 
@@ -201,6 +222,7 @@ def test_contact_page_lists_clue_and_double_digits_issue_boxes(client):
 
 def test_healthz_cloud_warnings_when_db_persistence_missing(monkeypatch):
     monkeypatch.setenv("GAE_ENV", "standard")
+    monkeypatch.setenv("AIX_DISPATCH_SERVICE_LABS", "drl")
     monkeypatch.delenv("RPS_DATABASE_URL", raising=False)
     monkeypatch.delenv("RPS_DATABASE_URL_SECRET", raising=False)
     monkeypatch.delenv("RPS_DB_SNAPSHOT_URI", raising=False)
@@ -221,11 +243,11 @@ def test_healthz_cloud_warnings_when_db_persistence_missing(monkeypatch):
     assert any("Clue persistence is not configured" in item for item in warnings)
 
 
-def test_healthz_cloud_warnings_accept_snapshot_persistence(monkeypatch):
+def test_cloud_healthz_treats_default_lab_services_as_dispatched(monkeypatch):
     monkeypatch.setenv("GAE_ENV", "standard")
-    monkeypatch.setenv("RPS_DB_SNAPSHOT_URI", "gs://aix-labs-data/rps/db/rps.sqlite3")
-    monkeypatch.setenv("C4_DB_SNAPSHOT_URI", "gs://aix-labs-data/c4/db/c4.sqlite3")
-    monkeypatch.setenv("CLUE_DB_SNAPSHOT_URI", "gs://aix-labs-data/clue/db/clue.sqlite3")
+    monkeypatch.delenv("RPS_DB_SNAPSHOT_URI", raising=False)
+    monkeypatch.delenv("C4_DB_SNAPSHOT_URI", raising=False)
+    monkeypatch.delenv("CLUE_DB_SNAPSHOT_URI", raising=False)
     monkeypatch.delenv("RPS_DATABASE_URL", raising=False)
     monkeypatch.delenv("RPS_DATABASE_URL_SECRET", raising=False)
     monkeypatch.delenv("C4_DATABASE_URL", raising=False)
@@ -235,10 +257,19 @@ def test_healthz_cloud_warnings_accept_snapshot_persistence(monkeypatch):
     app = create_hub_app({"TESTING": True})
     client = app.test_client()
 
-    response = client.get("/healthz")
+    response = client.get("/diagnostics/healthz")
 
     assert response.status_code == 200
-    assert response.get_json()["runtime_warnings"] == []
+    payload = response.get_json()
+    assert set(payload["deployed_service_labs"]) == {"rps", "c4", "clue", "doubledigits", "euclidyne", "polyfolds"}
+    assert set(payload["pending_labs"]) == {"drl"}
+    assert payload["runtime_warnings"] == []
+
+    home_response = client.get("/")
+    assert home_response.status_code == 200
+    html = home_response.get_data(as_text=True)
+    assert "Status: deployed service" in html
+    assert "Open Clue" in html
 
 
 @pytest.mark.parametrize(
@@ -255,3 +286,20 @@ def test_polyfolds_service_host_redirects_into_polyfolds_mount(path: str, target
     response = client.get(path, headers={"Host": "polyfolds-dot-aix-labs.uw.r.appspot.com"}, follow_redirects=False)
     assert response.status_code == 302
     assert response.headers["Location"].endswith(target)
+
+
+@pytest.mark.parametrize(
+    ("path", "target"),
+    [
+        ("/", "https://aix-labs.uw.r.appspot.com/clue/"),
+        ("/admin?admin_token=test", "https://aix-labs.uw.r.appspot.com/clue/admin?admin_token=test"),
+        ("/clue", "https://aix-labs.uw.r.appspot.com/clue/"),
+        ("/clue/game?token=seat", "https://aix-labs.uw.r.appspot.com/clue/game?token=seat"),
+    ],
+)
+def test_clue_service_host_redirects_to_canonical_aix_clue_path(path: str, target: str):
+    app = create_hub_app({"TESTING": True})
+    client = app.test_client()
+    response = client.get(path, headers={"Host": "clue-dot-aix-labs.uw.r.appspot.com"}, follow_redirects=False)
+    assert response.status_code == 301
+    assert response.headers["Location"] == target

@@ -21,6 +21,8 @@ def _mount_status(mount) -> tuple[str, str | None]:
     """Summarize the current runtime status for one resolved lab mount."""
 
     if mount.error == "disabled" or mount.app is None:
+        if mount.error == "deployed-service":
+            return "deployed-service", None
         return "disabled", None
     runtime_error = getattr(mount.app, "error", None)
     if runtime_error:
@@ -42,23 +44,38 @@ def _present_env(key: str) -> bool:
     return bool(str(os.getenv(key, "")).strip())
 
 
+def _lab_is_deployed_service(slug: str) -> bool:
+    """Return whether a lab is served by dispatch instead of the AIX process."""
+
+    for mount in current_app.extensions.get("lab_mounts", []):
+        if mount.spec.slug == slug:
+            return mount.error == "deployed-service"
+    return False
+
+
 def _runtime_warnings() -> list[str]:
     """Collect operator-facing runtime warnings for the current environment."""
 
     warnings: list[str] = []
     if not _is_cloud_runtime():
         return warnings
-    if not (_present_env("RPS_DATABASE_URL") or _present_env("RPS_DATABASE_URL_SECRET") or _present_env("RPS_DB_SNAPSHOT_URI")):
+    if not _lab_is_deployed_service("rps") and not (
+        _present_env("RPS_DATABASE_URL") or _present_env("RPS_DATABASE_URL_SECRET") or _present_env("RPS_DB_SNAPSHOT_URI")
+    ):
         warnings.append(
             "RPS persistence is not configured (set RPS_DATABASE_URL, RPS_DATABASE_URL_SECRET, or RPS_DB_SNAPSHOT_URI). "
             "Cloud instance restarts can lose local SQLite data."
         )
-    if not (_present_env("C4_DATABASE_URL") or _present_env("C4_DATABASE_URL_SECRET") or _present_env("C4_DB_SNAPSHOT_URI")):
+    if not _lab_is_deployed_service("c4") and not (
+        _present_env("C4_DATABASE_URL") or _present_env("C4_DATABASE_URL_SECRET") or _present_env("C4_DB_SNAPSHOT_URI")
+    ):
         warnings.append(
             "C4 persistence is not configured (set C4_DATABASE_URL, C4_DATABASE_URL_SECRET, or C4_DB_SNAPSHOT_URI). "
             "Cloud instance restarts can lose local SQLite data."
         )
-    if not (_present_env("CLUE_DATABASE_URL") or _present_env("CLUE_DATABASE_URL_SECRET") or _present_env("CLUE_DB_SNAPSHOT_URI")):
+    if not _lab_is_deployed_service("clue") and not (
+        _present_env("CLUE_DATABASE_URL") or _present_env("CLUE_DATABASE_URL_SECRET") or _present_env("CLUE_DB_SNAPSHOT_URI")
+    ):
         warnings.append(
             "Clue persistence is not configured (set CLUE_DATABASE_URL, CLUE_DATABASE_URL_SECRET, or CLUE_DB_SNAPSHOT_URI). "
             "Cloud instance restarts can lose local SQLite data."
@@ -97,6 +114,7 @@ def _bridge_config_snapshot() -> dict:
             "exports_dir_set": _present_env("C4_EXPORTS_DIR"),
         },
         "clue": {
+            "service_backed": _lab_is_deployed_service("clue"),
             "repo_override_set": _present_env("AIX_CLUE_REPO"),
             "database_url_set": _present_env("CLUE_DATABASE_URL"),
             "database_url_secret_set": _present_env("CLUE_DATABASE_URL_SECRET"),
@@ -136,7 +154,11 @@ def _toc_sections() -> list[dict]:
             "summary": "Umbrella navigation, service status, and bridge diagnostics for the active AIX runtime.",
             "routes": [
                 {"path": "/", "label": "Hub Home", "summary": "Primary splash page and launch surface for current AIX labs."},
-                {"path": "/healthz", "label": "Health", "summary": "JSON health summary for the AIX hub and mounted labs."},
+                {
+                    "path": "/diagnostics/healthz",
+                    "label": "Health",
+                    "summary": "JSON health summary for the AIX hub and mounted or dispatched labs.",
+                },
                 {
                     "path": "/diagnostics/bridges",
                     "label": "Bridge Diagnostics",
@@ -175,8 +197,19 @@ def _toc_sections() -> list[dict]:
             ),
             "routes": [
                 {"path": "/clue/", "label": "Clue Home", "summary": "Launch page for the standalone Clue lab."},
-                {"path": "/clue/game", "label": "Game Table", "summary": "Seat-specific board, hand, notebook, and table-talk surface."},
-                {"path": "/clue/api/v1/games", "label": "Create Game API", "summary": "JSON endpoint for hosted Clue table creation."},
+                {
+                    "path": "/clue/game",
+                    "label": "Game Table",
+                    "summary": "Seat-specific board, hand, notebook, and table-talk surface. Requires a signed seat token.",
+                    "link": False,
+                },
+                {
+                    "path": "/clue/api/v1/games",
+                    "label": "Create Game API",
+                    "summary": "POST JSON endpoint for hosted Clue table creation.",
+                    "method": "POST",
+                    "link": False,
+                },
             ],
         },
         {
@@ -189,7 +222,13 @@ def _toc_sections() -> list[dict]:
             "routes": [
                 {"path": "/doubledigits/", "label": "Double-digits Home", "summary": "Landing page for the standalone guided digit-composition lab."},
                 {"path": "/doubledigits/api/v1/examples", "label": "Examples API", "summary": "Curated and generated demo scenarios for each guided level."},
-                {"path": "/doubledigits/api/v1/infer", "label": "Inference API", "summary": "JSON endpoint for guided single-digit, double-digit, and arithmetic inference."},
+                {
+                    "path": "/doubledigits/api/v1/infer",
+                    "label": "Inference API",
+                    "summary": "POST JSON endpoint for guided single-digit, double-digit, and arithmetic inference.",
+                    "method": "POST",
+                    "link": False,
+                },
             ],
         },
         {
@@ -256,13 +295,13 @@ def toc_page() -> str:
     return render_template("pages/toc.html", title="AIX Table of Contents", toc_sections=_toc_sections())
 
 
-@hub_bp.get("/healthz")
-def healthz():
-    """Return service and mounted-lab health summary."""
+def _health_payload() -> dict:
+    """Build service and lab health status for local and cloud diagnostics."""
 
     mounts = _sorted_mounts()
     configured = [m.spec.slug for m in mounts]
     mounted = []
+    deployed = []
     pending = []
     disabled = []
     failed: dict[str, str] = {}
@@ -271,25 +310,44 @@ def healthz():
         slug = mount.spec.slug
         if status == "mounted":
             mounted.append(slug)
+        elif status == "deployed-service":
+            deployed.append(slug)
         elif status == "pending":
             pending.append(slug)
         elif status == "disabled":
             disabled.append(slug)
         elif status == "failed":
             failed[slug] = error or "unknown error"
-    return jsonify(
-        {
-            "status": "ok",
-            "service": "aix-hub",
-            "timestamp": datetime.now(UTC).isoformat(),
-            "configured_labs": configured,
-            "mounted_labs": mounted,
-            "pending_labs": pending,
-            "disabled_labs": disabled,
-            "failed_labs": failed,
-            "runtime_warnings": _runtime_warnings(),
-        }
-    )
+    return {
+        "status": "ok",
+        "service": "aix-hub",
+        "timestamp": datetime.now(UTC).isoformat(),
+        "configured_labs": configured,
+        "mounted_labs": mounted,
+        "deployed_service_labs": deployed,
+        "pending_labs": pending,
+        "disabled_labs": disabled,
+        "failed_labs": failed,
+        "runtime_warnings": _runtime_warnings(),
+    }
+
+
+@hub_bp.get("/diagnostics/healthz")
+def diagnostics_healthz():
+    """Return public health diagnostics without using App Engine's health path."""
+
+    return jsonify(_health_payload())
+
+
+@hub_bp.get("/healthz")
+def healthz():
+    """Return local/dev health diagnostics.
+
+    The public App Engine deployment may reserve or intercept ``/healthz``;
+    public docs and TOC links use ``/diagnostics/healthz`` instead.
+    """
+
+    return jsonify(_health_payload())
 
 
 @hub_bp.get("/diagnostics/bridges")

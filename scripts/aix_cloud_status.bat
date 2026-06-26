@@ -10,7 +10,6 @@ echo SA     : %SA_EMAIL%
 echo DRL URL: %AIX_DRL_APP_URL%
 echo RPS DB : %RPS_DB_SNAPSHOT_URI%
 echo C4 DB  : %C4_DB_SNAPSHOT_URI%
-echo Clue DB: %CLUE_DB_SNAPSHOT_URI%
 
 echo.
 echo ^> gcloud auth list

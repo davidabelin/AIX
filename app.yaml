@@ -7,6 +7,5 @@ env_variables:
   AIX_DRL_APP_URL: https://drl-web-x2ulcmhaiq-wm.a.run.app
   RPS_DB_SNAPSHOT_URI: gs://aix-labs-data/rps/db/rps.sqlite3
   C4_DB_SNAPSHOT_URI: gs://aix-labs-data/c4/db/c4.sqlite3
-  CLUE_DB_SNAPSHOT_URI: gs://aix-labs-data/clue/db/clue.sqlite3
 
 service_account: aix-admin@aix-labs.iam.gserviceaccount.com

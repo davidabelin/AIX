@@ -36,13 +36,14 @@
   - [] issue: the active `gcloud` account in this session does not have IAM access on that project, so it could not be inspected or retired safely.
 
 ## DRL 
-### Legacy URL: `https://drl-web-x2ulcmhaiq-wm.a.run.app/`
-- [x] Replace the ugly generated DRL URL as the canonical entry point.
-  - Current canonical DRL URL is `https://deeprl-031026.wm.r.appspot.com/`
-  - AIX already points to the canonical App Engine URL, and that canonical URL serves the updated chrome
+### Canonical URL: `https://drl-web-x2ulcmhaiq-wm.a.run.app/`
+- [x] Keep the Cloud Run service as the canonical DRL entry point.
+  - Current canonical DRL URL is `https://drl-web-x2ulcmhaiq-wm.a.run.app/`
+  - `https://deeprl-031026.wm.r.appspot.com/` remains a compatibility alias.
+  - AIX points to the canonical Cloud Run URL.
 - [x] Change `Back to AIX Hub` to `AIX Labs` and point it to AIX.
   - Verified on the canonical App Engine DRL URL and in the local DRL repo
-- [ ] Retire or redirect the legacy Cloud Run URL if it is no longer intended to be public.
+- [ ] Retire or redirect the App Engine compatibility alias if it is no longer intended to be public.
   - It still responds, so this is now a deployment/cloud cleanup item rather than an AIX-code item.
 
 ## Euclidyne / AIX follow-up
@@ -88,6 +89,9 @@
 - [x] Deploy online; live link from AIX main page
   - Live on App Engine at `https://aix-labs.uw.r.appspot.com/clue/`
 - [x] Move deployed Clue off costly Cloud SQL.
+- [x] Split Clue deployment back out of the AIX deploy scripts.
+  - Clue deploys from the sibling Clue repo via `deploy_clue.bat`.
+  - AIX keeps only the canonical `/clue/` path and dispatch/redirect wiring.
   - AIX now uses `/tmp` SQLite plus Cloud Storage snapshots for low-cost durability.
 - [x] Wire production secrets cleanly for deployed Clue.
   - `OPENAI_API_KEY` now resolves through Secret Manager, and the production database URL does too.

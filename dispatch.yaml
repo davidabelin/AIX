@@ -1,20 +1,34 @@
 dispatch:
   - url: "polyfolds-dot-aix-labs.uw.r.appspot.com/*"
     service: polyfolds
+  - url: "clue-dot-aix-labs.uw.r.appspot.com/*"
+    service: default
   - url: "*/api/v1/*"
+    service: rps
+  - url: "*/rps"
     service: rps
   - url: "*/rps/*"
     service: rps
+  - url: "*/c4"
+    service: c4
   - url: "*/c4/*"
     service: c4
+  - url: "*/clue"
+    service: clue
   - url: "*/clue/*"
     service: clue
+  - url: "*/doubledigits"
+    service: doubledigits
   - url: "*/doubledigits/*"
     service: doubledigits
+  - url: "*/euclidyne"
+    service: euclidyne
   - url: "*/euclidyne/*"
     service: euclidyne
   - url: "*/euclidorithm/*"
     service: default
+  - url: "*/polyfolds"
+    service: polyfolds
   - url: "*/polyfolds/*"
     service: polyfolds
   - url: "*/*"

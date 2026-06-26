@@ -10,12 +10,15 @@ in their own repositories and are mounted by interface.
 - `rps` remains independent and is mounted under `/rps`.
 - `drl` remains independent as a sister app; AIX links to it through `/drl/`.
 - `c4` remains independent and is mounted under `/c4`.
-- `clue` remains independent and is mounted under `/clue`.
+- `clue` remains independent and is reached under `/clue`.
 - `doubledigits` remains independent and is mounted under `/doubledigits`.
 - `euclidyne` remains independent and is mounted under `/euclidyne`.
 - `polyfolds` lives in the sibling `pf` repo and is routed under `/polyfolds`.
 - Large generated datasets are not tracked in this repo by default.
-- Lab apps load lazily on first request to their mount path.
+- Local development lazy-loads lab apps on first request to their mount path.
+- Cloud AIX treats separately deployed lab services as App Engine-dispatched
+  services, so the hub links to the same path prefixes without importing those
+  sibling repos into the default service process.
 
 ## Local setup
 
@@ -63,19 +66,23 @@ Then open `http://127.0.0.1:5000/`.
 
 Useful diagnostics endpoints:
 
-- `/healthz` for mount status + runtime warnings.
+- `/diagnostics/healthz` for mount/dispatch status + runtime warnings.
+- `/healthz` remains as a local/dev compatibility alias, but public App Engine
+  checks should use `/diagnostics/healthz`.
 - `/diagnostics/bridges` for non-secret bridge/config hints.
 
 Legacy RPS absolute API calls are bridged at `/api/v1/*` for compatibility.
 Legacy `/euclidorithm/*` links are redirected to `/euclidyne/*` during the transition.
 
-Cloud persistence note:
+Cloud service note:
 
-- On App Engine, AIX uses local SQLite under `/tmp` plus Cloud Storage snapshots
-  for low-cost durability. Configure `RPS_DB_SNAPSHOT_URI`, `C4_DB_SNAPSHOT_URI`,
-  and `CLUE_DB_SNAPSHOT_URI` when mounting sibling labs through the hub.
-- Direct database URLs remain supported by the sibling lab repos for local or
-  rollback scenarios, but AIX no longer requires Cloud SQL.
+- On App Engine, the default AIX service owns the hub, diagnostics, DRL portal,
+  and compatibility redirects. Separately deployed lab services such as Clue
+  own their own persistence settings and are routed through `dispatch.yaml`.
+- `AIX_DISPATCH_SERVICE_LABS` can override the default cloud-dispatched lab
+  list for a rollback or diagnostic run.
+- Direct database URLs and Cloud Storage snapshots remain supported by sibling
+  lab repos, but AIX no longer carries Clue persistence configuration.
 
 ## Cloud deploy
 
@@ -86,16 +93,20 @@ setup:
 scripts\deploy
 ```
 
-This wraps `scripts\aix_cloud_deploy.bat`, previews which sibling repos are in
-scope, and then deploys the AIX hub plus any lab repo with an `app.aix.yaml`
-manifest. App Engine uploads the current local filesystem contents, so
-uncommitted edits in `aix`, `clue`, or another sibling lab repo are included in
-what goes live.
+This wraps `scripts\aix_cloud_deploy.bat`, previews which AIX-managed services
+are in scope, and then deploys the AIX default service plus dispatch rules.
+App Engine uploads the current local filesystem contents, so uncommitted edits
+inside an included repo are part of what goes live.
 
-Clue `v1.9.5` does not change the basic deploy contract. It still deploys via
-`clue\app.aix.yaml`, but that manifest now carries the Agents SDK-related env
-vars and the built image now includes the `openai-agents` and `aiosqlite`
-dependencies from `clue\requirements.txt`.
+Clue is intentionally excluded from the AIX deploy scripts. Deploy Clue from
+the sibling Clue repo with:
+
+```powershell
+..\clue\deploy_clue.bat
+```
+
+That Clue deploy helper owns its App Engine manifest selection and upload
+hygiene checks.
 
 ## Polyfolds Phase-1 API
 

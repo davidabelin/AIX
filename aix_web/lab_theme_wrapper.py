@@ -113,7 +113,27 @@ _FOOTER_COPY_RE = re.compile(
 )
 
 
-def _build_injection(slug: str) -> str:
+def _build_footer() -> str:
+    """Build the shared AIX footer used when a lab page lacks one."""
+
+    return """
+<footer class="aix-injected-footer">
+  <div class="footer-inner">
+    <p class="footer-copy aix-footer-copy">
+      <img class="copyleft-mark" src="/static/icons/copyleft.svg" alt="" aria-hidden="true" width="16" height="16">
+      <span>2026 AIX Protodyne</span>
+    </p>
+    <nav class="footer-links" aria-label="AIX footer">
+      <a href="/contact">Contact Us</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/toc">AIX TOC</a>
+    </nav>
+  </div>
+</footer>
+""".strip()
+
+
+def _build_injection(slug: str, *, include_footer: bool) -> str:
     """Build the CSS and back-link snippet injected into lab HTML responses."""
 
     palette = LAB_PALETTES.get(slug, LAB_PALETTES["rps"])
@@ -259,8 +279,32 @@ def _build_injection(slug: str) -> str:
     max-height: 16px;
     flex: 0 0 auto;
   }}
+  .aix-injected-footer {{
+    width: min(900px, 94vw);
+    margin: 0.5rem auto 4rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }}
+  .aix-injected-footer .footer-inner {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--line);
+    padding-top: 0.65rem;
+  }}
+  .aix-injected-footer .footer-copy {{
+    margin: 0;
+  }}
+  .aix-injected-footer .footer-links {{
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }}
 {compact_overrides}
 </style>
+{_build_footer() if include_footer else ""}
 <a id="aix-subpage-back" href="/">AIX Labs</a>
 """.strip()
 
@@ -285,7 +329,7 @@ def _inject_html(html_text: str, slug: str) -> str:
     html_text = _normalize_aix_chrome(html_text)
     if 'id="aix-subpage-back"' in html_text:
         return html_text
-    snippet = _build_injection(slug)
+    snippet = _build_injection(slug, include_footer=("2026 AIX Protodyne" not in html_text))
     if _BODY_CLOSE_RE.search(html_text):
         return _BODY_CLOSE_RE.sub(f"{snippet}</body>", html_text, count=1)
     return html_text + snippet

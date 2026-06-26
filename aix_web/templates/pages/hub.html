@@ -19,6 +19,9 @@
     {% if card.status == "mounted" %}
     <p class="status status-ok">Status: mounted</p>
     <a class="btn btn-primary" href="/{{ mount.spec.slug }}/">Open {{ mount.spec.display_name }}</a>
+    {% elif card.status == "deployed-service" %}
+    <p class="status status-ok">Status: deployed service</p>
+    <a class="btn btn-primary" href="/{{ mount.spec.slug }}/">Open {{ mount.spec.display_name }}</a>
     {% elif card.status == "pending" %}
     <p class="status">Status: pending (loads on first request)</p>
     <a class="btn btn-primary" href="/{{ mount.spec.slug }}/">Open {{ mount.spec.display_name }}</a>
