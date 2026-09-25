@@ -268,7 +268,8 @@ def test_cloud_healthz_treats_default_lab_services_as_dispatched(monkeypatch):
     home_response = client.get("/")
     assert home_response.status_code == 200
     html = home_response.get_data(as_text=True)
-    assert "Status: deployed service" in html
+    assert 'data-status="deployed-service"' in html
+    assert "Live" in html
     assert "Open Clue" in html
 
 

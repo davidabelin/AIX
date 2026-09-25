@@ -1,0 +1,17 @@
+{% extends "base_hub.html" %}
+{% block title %}AIX | Page not found{% endblock %}
+{% block content %}
+<section class="hero hero-lost">
+  <p class="eyebrow">404 &middot; Page not found</p>
+  <h1>This page wandered off into latent space.</h1>
+  <p class="lede">
+    Nothing lives at <code>{{ request.path }}</code>. It may have moved, or the link may have a typo.
+    Here are a few ways back to solid ground.
+  </p>
+  <div class="hero-actions">
+    <a class="btn btn-primary btn-lg" href="{{ url_for('hub.home') }}">Back to the hub</a>
+    <a class="btn btn-ghost btn-lg" href="{{ url_for('hub.surprise_me') }}">Surprise me</a>
+    <a class="btn btn-ghost btn-lg" href="{{ url_for('hub.toc_page') }}">See every page</a>
+  </div>
+</section>
+{% endblock %}

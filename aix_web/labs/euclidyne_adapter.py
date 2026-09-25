@@ -44,12 +44,20 @@ def _candidate_import_roots() -> list[Path]:
     return candidates
 
 
+def find_euclidyne_root() -> Path | None:
+    """Return the first existing Euclidyne import root, if any is present."""
+
+    for candidate in _candidate_import_roots():
+        if candidate.exists():
+            return candidate
+    return None
+
+
 def _ensure_import_root() -> None:
     """Insert the first existing Euclidyne import root into ``sys.path``."""
 
-    for candidate in _candidate_import_roots():
-        if not candidate.exists():
-            continue
+    candidate = find_euclidyne_root()
+    if candidate is not None:
         candidate_str = str(candidate)
         if candidate_str not in sys.path:
             sys.path.insert(0, candidate_str)

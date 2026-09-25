@@ -1,0 +1,43 @@
+{# Small line-art glyphs for each lab card. Icons inherit color via currentColor. #}
+{% macro lab_icon(slug) -%}
+<svg class="lab-icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false"
+     fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  {%- if slug == "rps" %}
+  <circle cx="16" cy="8.5" r="4.5"/>
+  <rect x="3.5" y="18.5" width="9" height="9" rx="1.5"/>
+  <path d="M21 27.5 28.5 19M21 19l7.5 8.5"/>
+  {%- elif slug == "c4" %}
+  <rect x="3.5" y="5.5" width="25" height="21" rx="3"/>
+  <circle cx="10" cy="12" r="2.3"/>
+  <circle cx="16" cy="12" r="2.3"/>
+  <circle cx="22" cy="12" r="2.3" fill="currentColor"/>
+  <circle cx="10" cy="20" r="2.3" fill="currentColor"/>
+  <circle cx="16" cy="20" r="2.3" fill="currentColor"/>
+  <circle cx="22" cy="20" r="2.3"/>
+  {%- elif slug == "clue" %}
+  <circle cx="13" cy="13" r="7.5"/>
+  <path d="m18.5 18.5 9 9"/>
+  <path d="M13 9.5v4l2.5 2"/>
+  {%- elif slug == "doubledigits" %}
+  <path d="M5 11.5c0-3 2.2-5 4.8-5s4.7 2 4.2 4.7c-.5 2.6-3.6 5.1-8.8 14.3h9.3"/>
+  <path d="M26 25.5v-19l-8.5 12.5H28"/>
+  {%- elif slug == "euclidyne" %}
+  <circle cx="16" cy="16" r="11.5"/>
+  <path d="M16 4.5 26 21.8H6Z"/>
+  <circle cx="16" cy="16" r="1.4" fill="currentColor"/>
+  {%- elif slug == "polyfolds" %}
+  <path d="M12 3.5h8v8h-8zM4 11.5h8v8H4zM12 11.5h8v8h-8zM20 11.5h8v8h-8zM12 19.5h8v8h-8z"/>
+  {%- elif slug == "drl" %}
+  <circle cx="6" cy="9" r="2.5"/>
+  <circle cx="6" cy="23" r="2.5"/>
+  <circle cx="16" cy="6" r="2.5"/>
+  <circle cx="16" cy="16" r="2.5"/>
+  <circle cx="16" cy="26" r="2.5"/>
+  <circle cx="26.5" cy="16" r="2.5"/>
+  <path d="M8.3 8.1 13.7 6.8M8.2 10.1l5.6 4.7M8.2 21.9l5.6-4.7M8.3 23.9l5.4 1.3M18.3 7.2l6.4 6.9M18.5 16h5.5M18.3 24.8l6.4-6.9"/>
+  {%- else %}
+  <circle cx="16" cy="16" r="11.5"/>
+  <path d="M11 20.5 16 9l5 11.5M12.8 16.5h6.4"/>
+  {%- endif %}
+</svg>
+{%- endmacro %}

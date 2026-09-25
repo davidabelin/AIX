@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="aix-g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f7b6d"/>
+      <stop offset="0.55" stop-color="#0a4f8b"/>
+      <stop offset="1" stop-color="#ff6f3c"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="url(#aix-g)"/>
+  <g stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity="0.9">
+    <path d="M9 22 16 9.5 23 22Z" fill="none"/>
+    <path d="M16 9.5V17.5M9 22l7-4.5 7 4.5"/>
+  </g>
+  <g fill="#fff">
+    <circle cx="16" cy="9.5" r="2.6"/>
+    <circle cx="9" cy="22" r="2.6"/>
+    <circle cx="23" cy="22" r="2.6"/>
+    <circle cx="16" cy="17.5" r="2" fill="#ffd9c8"/>
+  </g>
+</svg>

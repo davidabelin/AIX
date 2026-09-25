@@ -1,6 +1,37 @@
-# AIX
+# AIX: Assorted Artificial Intelligence Labs
 
-Assorted Artificial Intelligence Labs umbrella app.
+An open-source AI playground: play games against agents that learn, peek inside
+neural nets as they read handwritten digits, and tinker with the math
+underneath. **Live at <https://aix-labs.uw.r.appspot.com/>**. Or hit
+[Surprise me](https://aix-labs.uw.r.appspot.com/surprise) and let the dice pick.
+
+| Lab | What you can do | Path |
+| --- | --- | --- |
+| RPS Agent Lab | Throw rock, paper, or scissors against agents that learn your habits. | `/rps/` |
+| Deep RL Lab | Land lunar modules and train robot arms with deep reinforcement learning. | `/drl/` |
+| Connect4 | Drop discs against agents and watch them forecast your next move. | `/c4/` |
+| Clue | Crack the case with human sleuths and probabilistic AI detectives. | `/clue/` |
+| Double-digits | Watch a neural net read handwritten digits, then do arithmetic with them. | `/doubledigits/` |
+| Euclidyne | Play Euclid's algorithm like an instrument: ratios, gears, and rhythm. | `/euclidyne/` |
+| Polyfolds | Unfold polyhedra into flat nets and learn which ones truly fold back up. | `/polyfolds/` |
+
+## Quick start
+
+```powershell
+python -m venv venv; venv\Scripts\activate
+pip install -r requirements-dev.txt
+python run.py
+```
+
+Then open <http://127.0.0.1:5000/>. On startup `run.py` prints which labs it
+found locally and how to fix any that are missing. Options: `--port 8080` (or
+`PORT`), `--host 0.0.0.0` (or `AIX_HOST`), and `--no-reload`.
+
+Each lab lives in its own sibling repo (`../rps`, `../c4`, `../clue`, `../dd`,
+`../geometry/euclidyne`). Missing ones show up on the hub as
+"Not installed here" with a one-line fix instead of failing silently.
+
+## How it fits together
 
 This repository hosts the AIX hub and bridge adapters. Lab implementations stay
 in their own repositories and are mounted by interface.
@@ -64,8 +95,10 @@ python run.py
 
 Then open `http://127.0.0.1:5000/`.
 
-Useful diagnostics endpoints:
+Useful endpoints:
 
+- `/surprise` jumps to a random lab that is open right now.
+- `/toc` lists every public page with a short description.
 - `/diagnostics/healthz` for mount/dispatch status + runtime warnings.
 - `/healthz` remains as a local/dev compatibility alias, but public App Engine
   checks should use `/diagnostics/healthz`.
