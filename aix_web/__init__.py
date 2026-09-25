@@ -16,7 +16,7 @@ Euclidyne.
 
 from __future__ import annotations
 
-from flask import Flask, redirect, request
+from flask import Flask, jsonify, redirect, render_template, request
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from aix_web.blueprints.hub import hub_bp
@@ -102,6 +102,15 @@ def create_hub_app(config: dict | None = None) -> Flask:
         ]
         nav_mounts = sorted(nav_mounts, key=lambda item: int(item.spec.nav_order))
         return {"hub_nav_mounts": nav_mounts}
+
+    @app.errorhandler(404)
+    def not_found(_error):
+        """Serve a friendly 404 page, or JSON for API-style clients."""
+
+        accepts = request.accept_mimetypes
+        if accepts.accept_json and not accepts.accept_html:
+            return jsonify({"error": "not found", "path": request.path}), 404
+        return render_template("pages/not_found.html", title="Page not found"), 404
 
     app.register_blueprint(hub_bp)
     app.register_blueprint(routes_compat_bp)

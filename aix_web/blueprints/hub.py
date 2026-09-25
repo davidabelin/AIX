@@ -4,10 +4,23 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 import os
+import random
 
-from flask import Blueprint, current_app, jsonify, render_template
+from flask import Blueprint, current_app, jsonify, redirect, render_template, url_for
+
+from aix_web.lab_registry import LAB_CATEGORIES
+from aix_web.lab_theme_wrapper import LAB_PALETTES
 
 hub_bp = Blueprint("hub", __name__)
+
+# Friendly, visitor-facing wording for each card state: (label, tone, openable).
+CARD_STATES = {
+    "live": ("Live", "ok", True),
+    "ready": ("Ready", "ok", True),
+    "missing": ("Not installed here", "warn", False),
+    "disabled": ("Switched off", "off", False),
+    "failed": ("Having trouble", "error", False),
+}
 
 
 def _sorted_mounts():
@@ -150,6 +163,7 @@ def _toc_sections() -> list[dict]:
     specs = {spec.slug: spec for spec in current_app.extensions.get("lab_specs", [])}
     return [
         {
+            "slug": "hub",
             "title": "AIX Hub",
             "summary": "Umbrella navigation, service status, and bridge diagnostics for the active AIX runtime.",
             "routes": [
@@ -167,6 +181,7 @@ def _toc_sections() -> list[dict]:
             ],
         },
         {
+            "slug": "rps",
             "title": specs.get("rps").display_name if specs.get("rps") else "RPS Agent Lab",
             "summary": specs.get("rps").summary if specs.get("rps") else "Rock-paper-scissors gameplay, training, RL, and arena play.",
             "routes": [
@@ -178,6 +193,7 @@ def _toc_sections() -> list[dict]:
             ],
         },
         {
+            "slug": "c4",
             "title": specs.get("c4").display_name if specs.get("c4") else "Connect4",
             "summary": specs.get("c4").summary if specs.get("c4") else "Connect4 gameplay, training, and arena analysis.",
             "routes": [
@@ -189,6 +205,7 @@ def _toc_sections() -> list[dict]:
             ],
         },
         {
+            "slug": "clue",
             "title": specs.get("clue").display_name if specs.get("clue") else "Clue",
             "summary": (
                 specs.get("clue").summary
@@ -213,6 +230,7 @@ def _toc_sections() -> list[dict]:
             ],
         },
         {
+            "slug": "doubledigits",
             "title": specs.get("doubledigits").display_name if specs.get("doubledigits") else "Double-digits",
             "summary": (
                 specs.get("doubledigits").summary
@@ -232,6 +250,7 @@ def _toc_sections() -> list[dict]:
             ],
         },
         {
+            "slug": "euclidyne",
             "title": specs.get("euclidyne").display_name if specs.get("euclidyne") else "Euclidyne",
             "summary": specs.get("euclidyne").summary if specs.get("euclidyne") else "Instrument-lab explorations into Euclid, ratios, and rhythm.",
             "routes": [
@@ -244,6 +263,7 @@ def _toc_sections() -> list[dict]:
             ],
         },
         {
+            "slug": "polyfolds",
             "title": specs.get("polyfolds").display_name if specs.get("polyfolds") else "Polyfolds",
             "summary": specs.get("polyfolds").summary if specs.get("polyfolds") else "Standalone polyhedral net classification and repair lab shell.",
             "routes": [
@@ -253,25 +273,96 @@ def _toc_sections() -> list[dict]:
     ]
 
 
+def _quick_links_by_slug() -> dict[str, list[dict]]:
+    """Return browsable TOC routes per lab, minus lab homes and JSON APIs."""
+
+    links: dict[str, list[dict]] = {}
+    for section in _toc_sections():
+        slug = section["slug"]
+        links[slug] = [
+            {"label": route["label"], "path": route["path"]}
+            for route in section["routes"]
+            if route.get("link", True) and "/api/" not in route["path"] and route["path"] != f"/{slug}/"
+        ]
+    return links
+
+
+def _card_state(mount, status: str) -> str:
+    """Translate a mount status into the visitor-facing card state."""
+
+    if status in {"mounted", "deployed-service"}:
+        return "live"
+    if status == "disabled":
+        return "disabled"
+    locate = mount.spec.locate_source
+    if locate is not None and not _is_cloud_runtime() and locate() is None:
+        # A missing local checkout reads the same before and after a failed load.
+        return "missing"
+    if status == "pending":
+        return "live" if _is_cloud_runtime() else "ready"
+    return "failed"
+
+
+def _lab_cards() -> list[dict]:
+    """Build the hub's lab cards: identity, palette, state, and quick links."""
+
+    quick_links = _quick_links_by_slug()
+    cards = []
+    for mount in _sorted_mounts():
+        spec = mount.spec
+        status, error = _mount_status(mount)
+        state = _card_state(mount, status)
+        label, tone, openable = CARD_STATES[state]
+        palette = LAB_PALETTES.get(spec.slug, LAB_PALETTES["rps"])
+        cards.append(
+            {
+                "mount": mount,
+                "slug": spec.slug,
+                "status": status,
+                "error": error,
+                "state": state,
+                "state_label": label,
+                "state_tone": tone,
+                "openable": openable,
+                "category": spec.category,
+                "category_label": LAB_CATEGORIES.get(spec.category, spec.category.title()),
+                "accent": palette["accent"],
+                "accent_2": palette["accent_2"],
+                "soft": palette["brand_soft"],
+                "quick_links": quick_links.get(spec.slug, []) if openable else [],
+            }
+        )
+    return cards
+
+
 @hub_bp.get("/")
 def home() -> str:
     """Render AIX landing page with registered lab status cards."""
 
-    cards = []
-    for mount in _sorted_mounts():
-        status, error = _mount_status(mount)
-        cards.append(
-            {
-                "mount": mount,
-                "status": status,
-                "error": error,
-            }
-        )
+    cards = _lab_cards()
+    present = {card["category"] for card in cards}
+    categories = [
+        {"key": key, "label": label, "count": sum(1 for card in cards if card["category"] == key)}
+        for key, label in LAB_CATEGORIES.items()
+        if key in present
+    ]
     return render_template(
         "pages/hub.html",
         lab_cards=cards,
+        categories=categories,
+        open_count=sum(1 for card in cards if card["openable"]),
         title=current_app.config.get("HUB_TITLE", "AIX"),
     )
+
+
+@hub_bp.get("/surprise")
+def surprise_me():
+    """Redirect to a random lab that can be opened right now."""
+
+    choices = [card["slug"] for card in _lab_cards() if card["openable"]]
+    if not choices:
+        return redirect(url_for("hub.home"))
+    return redirect(f"/{random.choice(choices)}/")
 
 
 @hub_bp.get("/contact")

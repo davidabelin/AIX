@@ -64,6 +64,23 @@ def add_import_path(env_var: str, default_relative_path: str) -> Path | None:
     the specific mounted lab.
     """
 
+    candidate = resolve_repo_path(env_var, default_relative_path)
+    if candidate is None:
+        return None
+    candidate_str = str(candidate)
+    if candidate_str not in sys.path:
+        sys.path.insert(0, candidate_str)
+    return candidate
+
+
+def resolve_repo_path(env_var: str, default_relative_path: str) -> Path | None:
+    """Return the first existing sibling-repo location without importing it.
+
+    Honors the ``env_var`` override first, then the default sibling layout
+    relative to the AIX repo root. Unlike ``add_import_path`` this has no side
+    effects, so the hub can cheaply ask "is this lab checked out here?".
+    """
+
     override = str(os.getenv(env_var, "")).strip()
     candidates = []
     if override:
@@ -71,10 +88,6 @@ def add_import_path(env_var: str, default_relative_path: str) -> Path | None:
     candidates.append((AIX_ROOT / default_relative_path).resolve())
 
     for candidate in candidates:
-        if not candidate.exists():
-            continue
-        candidate_str = str(candidate)
-        if candidate_str not in sys.path:
-            sys.path.insert(0, candidate_str)
-        return candidate
+        if candidate.exists():
+            return candidate
     return None

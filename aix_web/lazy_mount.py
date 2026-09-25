@@ -15,6 +15,7 @@ the AIX dispatcher mounts those wrappers under the relevant path prefixes.
 
 from __future__ import annotations
 
+from html import escape
 from threading import RLock
 from typing import Callable
 
@@ -42,9 +43,10 @@ class LazyMountApp:
     requests remain deterministic and cheap.
     """
 
-    def __init__(self, *, name: str, loader: Callable[[], Callable]) -> None:
+    def __init__(self, *, name: str, loader: Callable[[], Callable], hint: str = "") -> None:
         self.name = str(name)
         self._loader = loader
+        self.hint = str(hint or "")
         self._app = None
         self._error: str | None = None
         self._lock = RLock()
@@ -84,14 +86,24 @@ class LazyMountApp:
     def __call__(self, environ, start_response):
         """Dispatch one request to the lazily loaded target app.
 
-        Returns a ``503`` text response when the target lab failed to load.
+        Returns a small ``503`` HTML page when the target lab failed to load,
+        including the load error and, when known, how to fix it.
         """
 
         app = self._load()
         if app is None:
-            body = f"Lab '{self.name}' is unavailable: {self._error or 'unknown error'}\n".encode("utf-8")
+            hint = f"<p><strong>How to fix:</strong> {escape(self.hint)}</p>" if self.hint else ""
+            body = (
+                "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">"
+                f"<title>{escape(self.name)} is unavailable</title></head><body><main><section>"
+                f"<h1>Lab '{escape(self.name)}' is unavailable</h1>"
+                f"<p><code>{escape(self._error or 'unknown error')}</code></p>"
+                f"{hint}"
+                "<p><a href=\"/\">Back to the AIX hub</a></p>"
+                "</section></main></body></html>\n"
+            ).encode("utf-8")
             headers = [
-                ("Content-Type", "text/plain; charset=utf-8"),
+                ("Content-Type", "text/html; charset=utf-8"),
                 ("Content-Length", str(len(body))),
             ]
             start_response("503 SERVICE UNAVAILABLE", headers)

@@ -20,14 +20,21 @@ from dataclasses import dataclass
 import os
 from typing import Any, Callable
 
+from aix_web.bridge import resolve_repo_path
 from aix_web.lazy_mount import LazyMountApp
 
 
 LabLoader = Callable[[], Any]
+SourceLocator = Callable[[], Any]
 SLUG_ALIASES = {
     "euclidorithm": "euclidyne",
 }
 DEFAULT_DISPATCH_SERVICE_SLUGS = {"rps", "c4", "clue", "doubledigits", "euclidyne", "polyfolds"}
+LAB_CATEGORIES = {
+    "games": "Games",
+    "learning": "Machine learning",
+    "math": "Math & geometry",
+}
 
 
 @dataclass(slots=True)
@@ -36,6 +43,11 @@ class LabSpec:
 
     ``LabSpec`` is the stable metadata contract shared by the AIX hub UI, the
     WSGI mount builder, and diagnostics pages.
+
+    ``tagline`` and ``category`` drive the hub's lab cards. ``locate_source``
+    returns the lab's local checkout (or ``None`` when it is missing) for labs
+    that live in a sibling repo; ``install_hint`` tells a developer how to fix
+    a missing checkout.
     """
 
     slug: str
@@ -44,6 +56,10 @@ class LabSpec:
     summary: str
     loader: LabLoader
     enabled: bool = True
+    tagline: str = ""
+    category: str = "learning"
+    locate_source: SourceLocator | None = None
+    install_hint: str = ""
 
 
 @dataclass(slots=True)
@@ -126,7 +142,7 @@ def build_lab_specs() -> list[LabSpec]:
     from aix_web.labs.clue_adapter import load_clue_app
     from aix_web.labs.doubledigits_adapter import load_doubledigits_app
     from aix_web.labs.drl_adapter import load_drl_app
-    from aix_web.labs.euclidyne_adapter import load_euclidyne_app
+    from aix_web.labs.euclidyne_adapter import find_euclidyne_root, load_euclidyne_app
     from aix_web.labs.polyfolds_adapter import load_polyfolds_app
     from aix_web.labs.rps_adapter import load_rps_app
 
@@ -142,6 +158,10 @@ def build_lab_specs() -> list[LabSpec]:
                 summary="Stable gameplay, supervised training, RL, and benchmarks.",
                 loader=load_rps_app,
                 enabled=("rps" in enabled_slugs),
+                tagline="Throw rock, paper, or scissors against agents that learn your habits.",
+                category="games",
+                locate_source=lambda: resolve_repo_path("AIX_RPS_REPO", "../rps"),
+                install_hint="Clone the rps repo next to AIX (../rps) or set AIX_RPS_REPO.",
             ),
             LabSpec(
                 slug="drl",
@@ -150,6 +170,8 @@ def build_lab_specs() -> list[LabSpec]:
                 summary="AIX portal for the separate DRL sister app: TOC, orientation, and launch links.",
                 loader=load_drl_app,
                 enabled=("drl" in enabled_slugs),
+                tagline="Land lunar modules and train robot arms with deep reinforcement learning.",
+                category="learning",
             ),
             LabSpec(
                 slug="c4",
@@ -158,6 +180,10 @@ def build_lab_specs() -> list[LabSpec]:
                 summary="Connect4 gameplay, supervised training, and RL experiments.",
                 loader=load_c4_app,
                 enabled=("c4" in enabled_slugs),
+                tagline="Drop discs against Connect4 agents and watch them forecast your next move.",
+                category="games",
+                locate_source=lambda: resolve_repo_path("AIX_C4_REPO", "../c4"),
+                install_hint="Clone the c4 repo next to AIX (../c4) or set AIX_C4_REPO.",
             ),
             LabSpec(
                 slug="clue",
@@ -166,6 +192,10 @@ def build_lab_specs() -> list[LabSpec]:
                 summary="Classic Clue board play with filtered private state, public discussion, and mixed human/AI seats.",
                 loader=load_clue_app,
                 enabled=("clue" in enabled_slugs),
+                tagline="Crack the case at a table of human sleuths and probabilistic AI detectives.",
+                category="games",
+                locate_source=lambda: resolve_repo_path("AIX_CLUE_REPO", "../clue"),
+                install_hint="Clone the clue repo next to AIX (../clue) or set AIX_CLUE_REPO.",
             ),
             LabSpec(
                 slug="doubledigits",
@@ -174,6 +204,10 @@ def build_lab_specs() -> list[LabSpec]:
                 summary="Guided handwritten-digit lab from single digits to two-digit composition and arithmetic scenes.",
                 loader=load_doubledigits_app,
                 enabled=("doubledigits" in enabled_slugs),
+                tagline="Watch a neural net read handwritten digits, then do arithmetic with them.",
+                category="learning",
+                locate_source=lambda: resolve_repo_path("AIX_DOUBLEDIGITS_REPO", "../dd"),
+                install_hint="Clone the dd repo next to AIX (../dd) or set AIX_DOUBLEDIGITS_REPO.",
             ),
             LabSpec(
                 slug="euclidyne",
@@ -182,6 +216,10 @@ def build_lab_specs() -> list[LabSpec]:
                 summary="Instrument-lab explorations into Euclid, ratios, and rhythm.",
                 loader=load_euclidyne_app,
                 enabled=("euclidyne" in enabled_slugs),
+                tagline="Play Euclid's algorithm like an instrument: ratios, gears, and rhythm.",
+                category="math",
+                locate_source=find_euclidyne_root,
+                install_hint="Place the Euclidyne repo at ../geometry/euclidyne or set AIX_EUCLIDYNE_REPO.",
             ),
             LabSpec(
                 slug="polyfolds",
@@ -190,6 +228,8 @@ def build_lab_specs() -> list[LabSpec]:
                 summary="Standalone polyhedral net classification and repair lab.",
                 loader=load_polyfolds_app,
                 enabled=("polyfolds" in enabled_slugs),
+                tagline="Unfold polyhedra into flat nets and learn which ones truly fold back up.",
+                category="math",
             ),
         ],
         key=lambda spec: int(spec.nav_order),
@@ -218,6 +258,6 @@ def resolve_lab_mounts(specs: list[LabSpec]) -> list[LabMount]:
         if spec.slug in dispatch_service_slugs:
             mounts.append(LabMount(spec=spec, app=None, error="deployed-service"))
             continue
-        app = LazyMountApp(name=spec.slug, loader=spec.loader)
+        app = LazyMountApp(name=spec.slug, loader=spec.loader, hint=spec.install_hint)
         mounts.append(LabMount(spec=spec, app=app, error=None))
     return mounts
