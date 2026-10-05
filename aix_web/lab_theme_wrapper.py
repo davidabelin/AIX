@@ -111,6 +111,26 @@ _FOOTER_COPY_RE = re.compile(
     r'<p class="footer-copy[^"]*">.*?2026 AIX Protodyne.*?</p>',
     re.IGNORECASE | re.DOTALL,
 )
+_LAB_FOOTER_COPY_RE = re.compile(
+    r'<p class="footer-copy[^"]*">.*?</p>',
+    re.IGNORECASE | re.DOTALL,
+)
+_LAB_FOOTER_LINKS_CLOSE_RE = re.compile(
+    r'(<nav class="footer-links"[^>]*>.*?)(</nav>)',
+    re.IGNORECASE | re.DOTALL,
+)
+
+_AIX_FOOTER_COPY = (
+    '<p class="footer-copy aix-footer-copy">'
+    '<img class="copyleft-mark" src="/static/icons/copyleft.svg" alt="" aria-hidden="true" width="16" height="16">'
+    "<span>2026 AIX Protodyne</span>"
+    "</p>"
+)
+_AIX_FOOTER_LINKS = (
+    '<a href="/contact">Contact Us</a>'
+    '<a href="/privacy">Privacy</a>'
+    '<a href="/toc">AIX TOC</a>'
+)
 
 
 def _build_footer() -> str:
@@ -313,13 +333,30 @@ def _normalize_aix_chrome(html_text: str) -> str:
     """Rewrite shared AIX chrome labels/footers across mounted lab HTML."""
 
     html_text = _BACK_LABEL_RE.sub(">AIX Labs<", html_text)
-    footer_markup = (
-        '<p class="footer-copy aix-footer-copy">'
-        '<img class="copyleft-mark" src="/static/icons/copyleft.svg" alt="" aria-hidden="true" width="16" height="16">'
-        "<span>2026 AIX Protodyne</span>"
-        "</p>"
+    html_text = _FOOTER_COPY_RE.sub(_AIX_FOOTER_COPY, html_text)
+    return html_text
+
+
+def _merge_lab_footer(html_text: str) -> str | None:
+    """Fold AIX footer chrome into a lab footer that shares the hub markup.
+
+    Labs built on the AIX design language render their own ``.footer-copy``
+    and ``.footer-links`` block. Rather than stacking a second AIX footer under
+    it, rebrand the copy line and append the hub links to the lab's own nav.
+    Return ``None`` when the page has no such footer, so the caller injects
+    the standalone AIX footer instead.
+    """
+
+    if "2026 AIX Protodyne" in html_text:
+        return html_text
+    if not _LAB_FOOTER_COPY_RE.search(html_text) or not _LAB_FOOTER_LINKS_CLOSE_RE.search(html_text):
+        return None
+    html_text = _LAB_FOOTER_COPY_RE.sub(_AIX_FOOTER_COPY, html_text, count=1)
+    html_text = _LAB_FOOTER_LINKS_CLOSE_RE.sub(
+        lambda match: f"{match.group(1)}{_AIX_FOOTER_LINKS}{match.group(2)}",
+        html_text,
+        count=1,
     )
-    html_text = _FOOTER_COPY_RE.sub(footer_markup, html_text)
     return html_text
 
 
@@ -329,6 +366,9 @@ def _inject_html(html_text: str, slug: str) -> str:
     html_text = _normalize_aix_chrome(html_text)
     if 'id="aix-subpage-back"' in html_text:
         return html_text
+    merged = _merge_lab_footer(html_text)
+    if merged is not None:
+        html_text = merged
     snippet = _build_injection(slug, include_footer=("2026 AIX Protodyne" not in html_text))
     if _BODY_CLOSE_RE.search(html_text):
         return _BODY_CLOSE_RE.sub(f"{snippet}</body>", html_text, count=1)
